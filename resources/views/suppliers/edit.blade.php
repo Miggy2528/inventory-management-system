@@ -1,171 +1,125 @@
-@extends('layouts.tabler')
+@extends('layouts.butcher')
 
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center mb-3">
-            <div class="col">
-                <h2 class="page-title">
-                    {{ __('Edit Supplier') }}
-                </h2>
-            </div>
-        </div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Edit Supplier</h5>
+                </div>
 
-        @include('partials._breadcrumbs', ['model' => $supplier])
-    </div>
-</div>
+                <div class="card-body">
+                    <form action="{{ route('suppliers.update', $supplier) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
 
-<div class="page-body">
-    <div class="container-xl">
-        <div class="row row-cards">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $supplier->name) }}" required>
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-            <form action="{{ route('suppliers.update', $supplier) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('put')
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">
-                                    {{ __('Profile Image') }}
-                                </h3>
-
-                                <img
-                                    class="img-account-profile mb-2"
-                                    src="{{ $supplier->photo ? asset('storage/suppliers/' . $supplier->photo) : asset('assets/img/demo/user-placeholder.svg') }}"
-                                    id="image-preview"
-                                />
-
-                                <!-- Profile picture help block -->
-                                <div class="small font-italic text-muted mb-2">JPG or PNG no larger than 1 MB</div>
-                                <!-- Profile picture input -->
-                                <input class="form-control form-control-solid mb-2 @error('photo') is-invalid @enderror" type="file"  id="image" name="photo" accept="image/*" onchange="previewImage();">
-                                @error('photo')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                            <div class="col-md-6">
+                                <label for="shopname" class="form-label">Shop Name</label>
+                                <input type="text" class="form-control @error('shopname') is-invalid @enderror" id="shopname" name="shopname" value="{{ old('shopname', $supplier->shopname) }}" required>
+                                @error('shopname')
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h3 class="card-title">
-                                        {{ __('Supplier Details') }}
-                                    </h3>
-                                </div>
-
-                                <div class="card-actions">
-                                    <x-action.close route="{{ route('suppliers.index') }}" />
-                                </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $supplier->email) }}" required>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <div class="card-body">
-                                <div class="row row-cards">
-                                    <div class="col-md-12">
-                                        <x-input name="name" :value="old('name', $supplier->name)" :required="true"/>
-                                        <x-input name="email" label="Email address" :value="old('email', $supplier->email)" :required="true"/>
-                                        <x-input name="shopname" label="Shop name" :value="old('shopname', $supplier->shopname)" :required="true"/>
-                                        <x-input name="phone" label="Phone number" :value="old('phone', $supplier->phone)" :required="true"/>
-                                    </div>
 
-                                    <div class="col-sm-6 col-md-6">
-                                        <label for="type" class="form-label required">
-                                            Type of supplier
-                                        </label>
-
-                                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type">
-                                            @foreach(\App\Enums\SupplierType::cases() as $supplierType)
-                                            <option value="{{ $supplierType->value }}" @selected(old('type', $supplier->type) == $supplierType->value)>
-                                                {{ $supplierType->label() }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-
-                                        @error('type')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-sm-6 col-md-6">
-                                        <label for="bank_name" class="form-label required">
-                                            Bank Name
-                                        </label>
-
-                                        <select class="form-select @error('bank_name') is-invalid @enderror" id="bank_name" name="bank_name">
-                                            <option selected="" disabled="">Select a bank:</option>
-                                            <option value="BRI" @if(old('bank_name', $supplier->bank_name) == 'BRI')selected="selected"@endif>BRI</option>
-                                            <option value="BNI" @if(old('bank_name', $supplier->bank_name) == 'BNI')selected="selected"@endif>BNI</option>
-                                            <option value="BCA" @if(old('bank_name', $supplier->bank_name) == 'BCA')selected="selected"@endif>BCA</option>
-                                            <option value="BSI" @if(old('bank_name', $supplier->bank_name) == 'BSI')selected="selected"@endif>BSI</option>
-                                            <option value="Mandiri" @if(old('bank_name', $supplier->bank_name) == 'Mandiri')selected="selected"@endif>Mandiri</option>
-                                        </select>
-
-                                        @error('bank_name')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-sm-6 col-md-6">
-                                        <x-input name="account_holder"
-                                                 label="Account holder"
-                                                 :value="old('account_holder', $supplier->account_holder)"
-                                        />
-                                    </div>
-
-                                    <div class="col-sm-6 col-md-6">
-                                        <x-input name="account_number"
-                                                 label="Account number"
-                                                 :value="old('account_number', $supplier->account_number)"
-                                        />
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="mb-3">
-                                            <label for="address" class="form-label required">
-                                                {{ __('Address ') }}
-                                            </label>
-
-                                            <textarea id="address"
-                                                      name="address"
-                                                      rows="3"
-                                                      class="form-control @error('address') is-invalid @enderror"
-                                            >{{ old('address', $supplier->address) }}</textarea>
-
-                                            @error('address')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer text-end">
-                                <x-button.save type="submit">
-                                    {{ __('Update') }}
-                                </x-button.save>
-
-                                <x-button.back route="{{ route('suppliers.index') }}">
-                                    {{ __('Cancel') }}
-                                </x-button.back>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone', $supplier->phone) }}" required>
+                                @error('phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
-                    </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3" required>{{ old('address', $supplier->address) }}</textarea>
+                            @error('address')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="type" class="form-label">Type</label>
+                                <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="wholesale" {{ old('type', $supplier->type) == 'wholesale' ? 'selected' : '' }}>Wholesale</option>
+                                    <option value="retail" {{ old('type', $supplier->type) == 'retail' ? 'selected' : '' }}>Retail</option>
+                                    <option value="manufacturer" {{ old('type', $supplier->type) == 'manufacturer' ? 'selected' : '' }}>Manufacturer</option>
+                                </select>
+                                @error('type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="photo" class="form-label">Photo</label>
+                                @if($supplier->photo)
+                                    <div class="mb-2">
+                                        <img src="{{ Storage::url($supplier->photo) }}" alt="{{ $supplier->name }}" class="img-thumbnail" width="100">
+                                    </div>
+                                @endif
+                                <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo">
+                                @error('photo')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="account_holder" class="form-label">Account Holder</label>
+                                <input type="text" class="form-control @error('account_holder') is-invalid @enderror" id="account_holder" name="account_holder" value="{{ old('account_holder', $supplier->account_holder) }}">
+                                @error('account_holder')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="account_number" class="form-label">Account Number</label>
+                                <input type="text" class="form-control @error('account_number') is-invalid @enderror" id="account_number" name="account_number" value="{{ old('account_number', $supplier->account_number) }}">
+                                @error('account_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="bank_name" class="form-label">Bank Name</label>
+                                <input type="text" class="form-control @error('bank_name') is-invalid @enderror" id="bank_name" name="bank_name" value="{{ old('bank_name', $supplier->bank_name) }}">
+                                @error('bank_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ route('suppliers.index') }}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update Supplier</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 @endsection
-
-@pushonce('page-scripts')
-<script src="{{ asset('assets/js/img-preview.js') }}"></script>
-@endpushonce

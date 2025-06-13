@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
-            //$table->string('code')->unique();
-            $table->timestamps();
+        Schema::table('meat_cuts', function (Blueprint $table) {
+            $table->integer('quantity')->default(0)->after('is_available');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::table('meat_cuts', function (Blueprint $table) {
+            $table->dropColumn('quantity');
+        });
     }
-};
+}; 

@@ -2,76 +2,88 @@
 
 namespace App\Models;
 
-use App\Enums\TaxType;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, Sortable;
 
-    protected $guarded = ['id'];
-
-    public $fillable = [
+    protected $fillable = [
         'name',
         'slug',
         'code',
-        'quantity',
-        'quantity_alert',
-        'buying_price',
-        'selling_price',
-        'tax',
-        'tax_type',
-        'notes',
-        'product_image',
         'category_id',
         'unit_id',
-        'created_at',
-        'updated_at'
+        'meat_cut_id',
+        'quantity',
+        'weight_per_unit',
+        'price_per_kg',
+        'total_weight',
+        'storage_location',
+        'expiration_date',
+        'source',
+        'grade',
+        'processing_date',
+        'notes'
+    ];
+
+    public $sortable = [
+        'name',
+        'code',
+        'quantity',
+        'weight_per_unit',
+        'price_per_kg',
+        'total_weight',
+        'expiration_date',
+        'processing_date'
     ];
 
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'tax_type' => TaxType::class
+        'expiration_date' => 'date',
+        'processing_date' => 'date',
+        'weight_per_unit' => 'decimal:2',
+        'price_per_kg' => 'decimal:2',
+        'total_weight' => 'decimal:2'
     ];
 
-    public function getRouteKeyName(): string
+    public function scopeSearch($query, $value)
     {
-        return 'slug';
+        return $query->where('name', 'like', "%{$value}%")
+            ->orWhere('code', 'like', "%{$value}%")
+            ->orWhereHas('meatCut', function($q) use ($value) {
+                $q->where('name', 'like', "%{$value}%");
+            });
     }
 
-    public function category(): BelongsTo
+    public function meatCut()
+    {
+        return $this->belongsTo(MeatCut::class);
+    }
+
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function unit(): BelongsTo
+    public function unit()
     {
         return $this->belongsTo(Unit::class);
     }
 
-    protected function buyingPrice(): Attribute
+    public function inventoryMovements()
     {
-        return Attribute::make(
-            get: fn ($value) => $value / 100,
-            set: fn ($value) => $value * 100,
-        );
+        return $this->hasMany(InventoryMovement::class);
     }
 
-    protected function sellingPrice(): Attribute
+    public function getCurrentStockAttribute()
     {
-        return Attribute::make(
-            get: fn ($value) => $value / 100,
-            set: fn ($value) => $value * 100,
-        );
+        return $this->inventoryMovements()
+            ->where('type', 'in')
+            ->sum('quantity') - 
+            $this->inventoryMovements()
+            ->where('type', 'out')
+            ->sum('quantity');
     }
-
-    public function scopeSearch($query, $value): void
-    {
-        $query->where('name', 'like', "%{$value}%")
-            ->orWhere('code', 'like', "%{$value}%");
-    }
-}
+} 

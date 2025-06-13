@@ -4,43 +4,88 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>{{ config('app.name') }}</title>
+    <title>{{ config('app.name') }} - Yannis Meatshop</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
     <!-- CSS files -->
-    <link href="{{ asset('dist/css/tabler.min.css') }}" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://rsms.me/inter/inter.css');
         :root {
-            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+            --primary-color: #8B0000;
+            --secondary-color: #4A0404;
+            --accent-color: #FF4136;
         }
+        
         body {
-            font-feature-settings: "cv03", "cv04", "cv11";
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-logo i {
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .auth-title {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(139, 0, 0, 0.25);
         }
     </style>
 
-    <!-- Custom CSS for specific page.  -->
     @stack('page-styles')
 </head>
 
-<body class=" d-flex flex-column">
-    <div class="page page-center">
-        <div class="container container-tight py-4">
-            <div class="text-center mb-4">
-                <a href="{{ url('/') }}" class="navbar-brand navbar-brand-autodark">
-                    <img src="{{ asset('static/logo.svg') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
-                </a>
+<body>
+    <div class="container">
+        <div class="auth-card mx-auto">
+            <div class="auth-logo">
+                <i class="fas fa-drumstick-bite"></i>
+                <h4 class="mt-2">Yannis Meatshop</h4>
             </div>
 
-            <!-- BEGIN: Content -->
             @yield('content')
-            <!-- END: Content -->
         </div>
     </div>
 
-    <!-- Libs JS -->
-    <script src="{{ asset('dist/js/tabler.min.js') }}" defer></script>
-
-    <!-- Custom JS for specific page.  -->
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @stack('page-scripts')
 </body>
 </html>

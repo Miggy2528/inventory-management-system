@@ -1,103 +1,125 @@
-@extends('layouts.tabler')
+@extends('layouts.butcher')
 
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center mb-3">
-            <div class="col">
-                <h2 class="page-title">
-                    {{ __('Edit Supplier') }}
-                </h2>
-            </div>
-        </div>
-
-        @include('partials._breadcrumbs', ['model' => $supplier])
-    </div>
-</div>
-
-<div class="page-body">
-    <div class="container-xl">
-        <div class="row row-cards">
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title">
-                            {{ __('Profile Image') }}
-                        </h3>
-
-                        <img
-                            class="img-account-profile mb-2"
-                            src="{{ $supplier->photo ? asset('storage/suppliers/' . $supplier->photo) : asset('assets/img/demo/user-placeholder.svg') }}"
-                            id="image-preview"
-                        />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Supplier Details</h5>
+                    <div>
+                        @can('update', $supplier)
+                        <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-primary">Edit</a>
+                        @endcan
+                        <a href="{{ route('suppliers.index') }}" class="btn btn-secondary">Back</a>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <h3 class="card-title">
-                                {{ __('Supplier Details') }}
-                            </h3>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            @if($supplier->photo)
+                                <img src="{{ Storage::url($supplier->photo) }}" alt="{{ $supplier->name }}" class="img-fluid rounded mb-3" style="max-height: 200px;">
+                            @else
+                                <img src="{{ asset('images/no-image.png') }}" alt="No Image" class="img-fluid rounded mb-3" style="max-height: 200px;">
+                            @endif
                         </div>
-
-                        <div class="card-actions">
-                            <x-action.close route="{{ route('suppliers.index') }}" />
+                        <div class="col-md-8">
+                            <h4>{{ $supplier->name }}</h4>
+                            <p class="text-muted">{{ $supplier->shopname }}</p>
+                            <p><strong>Type:</strong> {{ ucfirst($supplier->type) }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="badge bg-{{ $supplier->status === 'active' ? 'success' : 'danger' }}">
+                                    {{ ucfirst($supplier->status) }}
+                                </span>
+                            </p>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered card-table table-vcenter text-nowrap datatable">
-                            <tbody>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Contact Information</h5>
+                            <table class="table">
                                 <tr>
-                                    <td>Name</td>
-                                    <td>{{ $supplier->name }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Email address</td>
+                                    <th>Email:</th>
                                     <td>{{ $supplier->email }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Phone number</td>
+                                    <th>Phone:</th>
                                     <td>{{ $supplier->phone }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Address</td>
+                                    <th>Address:</th>
                                     <td>{{ $supplier->address }}</td>
                                 </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5>Bank Details</h5>
+                            <table class="table">
                                 <tr>
-                                    <td>Shop name</td>
-                                    <td>{{ $supplier->shopname }}</td>
+                                    <th>Bank Name:</th>
+                                    <td>{{ $supplier->bank_name ?? 'Not provided' }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Type</td>
-                                    <td>{{ $supplier->type->label() }}</td>
+                                    <th>Account Holder:</th>
+                                    <td>{{ $supplier->account_holder ?? 'Not provided' }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Account holder</td>
-                                    <td>{{ $supplier->account_holder }}</td>
+                                    <th>Account Number:</th>
+                                    <td>{{ $supplier->account_number ?? 'Not provided' }}</td>
                                 </tr>
-                                <tr>
-                                    <td>Account number</td>
-                                    <td>{{ $supplier->account_number }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Bank name</td>
-                                    <td>{{ $supplier->bank_name }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            </table>
+                        </div>
                     </div>
 
-                    <div class="card-footer text-end">
-                        <x-button.edit route="{{ route('suppliers.edit', $supplier) }}">
-                            {{ __('Edit') }}
-                        </x-button.edit>
-                        <x-button.back route="{{ route('suppliers.index') }}">
-                            {{ __('Back') }}
-                        </x-button.back>
+                    @if($products->count() > 0)
+                    <div class="mt-4">
+                        <h5>Supplied Products</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($products as $product)
+                                    <tr>
+                                        <td>{{ $product->name }}</td>
+                                        <td>{{ $product->category->name }}</td>
+                                        <td>{{ number_format($product->price, 2) }}</td>
+                                        <td>{{ $product->stock }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                    @endif
+
+                    @can('update', $supplier)
+                    <div class="mt-4">
+                        <h5>Assign Products</h5>
+                        <form action="{{ route('suppliers.assign-products', $supplier) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <select name="product_ids[]" class="form-select" multiple>
+                                    @foreach(\App\Models\Product::all() as $product)
+                                        <option value="{{ $product->id }}" {{ $products->contains($product->id) ? 'selected' : '' }}>
+                                            {{ $product->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Products</button>
+                        </form>
+                    </div>
+                    @endcan
                 </div>
             </div>
         </div>

@@ -63,36 +63,58 @@
                     </th>
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('name')" href="#" role="button">
-                            {{ __('Name') }}
-                            @include('inclues._sort-icon', ['field' => 'name'])
+                            {{ __('Product Name') }}
+                            @include('includes._sort-icon', ['field' => 'name'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
-                        <a wire:click.prevent="sortBy('code')" href="#" role="button">
-                            {{ __('Code') }}
-                            @include('inclues._sort-icon', ['field' => 'code'])
+                        <a wire:click.prevent="sortBy('meat_cut_id')" href="#" role="button">
+                            {{ __('Meat Cut') }}
+                            @include('includes._sort-icon', ['field' => 'meat_cut_id'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
-                        <a wire:click.prevent="sortBy('category_id')" href="#" role="button">
-                            {{ __('Category') }}
-                            @include('inclues._sort-icon', ['field' => 'category_id'])
+                        <a wire:click.prevent="sortBy('grade')" href="#" role="button">
+                            {{ __('Grade') }}
+                            @include('includes._sort-icon', ['field' => 'grade'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('quantity')" href="#" role="button">
-                            {{ __('Quantity') }}
-                            @include('inclues._sort-icon', ['field' => 'quantity'])
+                            {{ __('Stock') }}
+                            @include('includes._sort-icon', ['field' => 'quantity'])
                         </a>
                     </th>
-
                     <th scope="col" class="align-middle text-center">
-                        <a wire:click.prevent="sortBy('quantity_alert')" href="#" role="button">
-                            {{ __('Quantity Alert') }}
-                            @include('inclues._sort-icon', ['field' => 'quantity_alert'])
+                        <a wire:click.prevent="sortBy('weight_per_unit')" href="#" role="button">
+                            {{ __('Weight/Unit (kg)') }}
+                            @include('includes._sort-icon', ['field' => 'weight_per_unit'])
                         </a>
                     </th>
-
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('total_weight')" href="#" role="button">
+                            {{ __('Total Weight (kg)') }}
+                            @include('includes._sort-icon', ['field' => 'total_weight'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('price_per_kg')" href="#" role="button">
+                            {{ __('Price/kg') }}
+                            @include('includes._sort-icon', ['field' => 'price_per_kg'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('storage_location')" href="#" role="button">
+                            {{ __('Storage') }}
+                            @include('includes._sort-icon', ['field' => 'storage_location'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('expiration_date')" href="#" role="button">
+                            {{ __('Expires') }}
+                            @include('includes._sort-icon', ['field' => 'expiration_date'])
+                        </a>
+                    </th>
                     <th scope="col" class="align-middle text-center">
                         {{ __('Action') }}
                     </th>
@@ -108,33 +130,29 @@
                         {{ $product->name }}
                     </td>
                     <td class="align-middle text-center">
-                        {{ $product->code }}
+                        {{ $product->meatCut ? $product->meatCut->name : 'N/A' }}
                     </td>
                     <td class="align-middle text-center">
-                        {{ $product->category->name }}
+                        {{ $product->grade ?? 'N/A' }}
                     </td>
                     <td class="align-middle text-center">
                         {{ $product->quantity }}
                     </td>
-                    <td class="align-middle text-center"
-                        x-data="{ bgColor: 'transparent' }"
-                        x-effect="bgColor = getBgColor({{ $product->quantity }}, {{ $product->quantity_alert }})"
-                        :style="'background: ' + bgColor"
-                    >
-                        {{ $product->quantity_alert }}
+                    <td class="align-middle text-center">
+                        {{ $product->weight_per_unit ? number_format($product->weight_per_unit, 2) : 'N/A' }}
                     </td>
-
-                    <script>
-                        function getBgColor(quantity, quantity_alert) {
-                            if (quantity_alert >= quantity) {
-                                return '#f8d7da'; // Red
-                            } else if (quantity_alert === quantity - 1 || quantity_alert === quantity - 2) {
-                                return '#fff70063'; // Yellow
-                            } 
-                            return 'transparent';
-                        }
-                    </script>
-
+                    <td class="align-middle text-center">
+                        {{ $product->total_weight ? number_format($product->total_weight, 2) : 'N/A' }}
+                    </td>
+                    <td class="align-middle text-center">
+                        ₱{{ number_format($product->price_per_kg, 2) }}
+                    </td>
+                    <td class="align-middle text-center">
+                        {{ $product->storage_location ?? 'N/A' }}
+                    </td>
+                    <td class="align-middle text-center" {!! $product->expiration_date && $product->expiration_date->isPast() ? 'style="background-color: #f8d7da;"' : '' !!}>
+                        {{ $product->expiration_date ? $product->expiration_date->format('M d, Y') : 'N/A' }}
+                    </td>
                     <td class="align-middle text-center" style="width: 10%">
                         <x-button.show class="btn-icon" route="{{ route('products.show', $product) }}"/>
                         <x-button.edit class="btn-icon" route="{{ route('products.edit', $product) }}"/>
@@ -143,7 +161,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td class="align-middle text-center" colspan="7">
+                    <td class="align-middle text-center" colspan="11">
                         No results found
                     </td>
                 </tr>

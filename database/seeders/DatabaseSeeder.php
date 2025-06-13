@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-                //UserSeeder::class,
+            StaffSeeder::class,
             CategorySeeder::class,
             UnitSeeder::class,
             ProductSeeder::class
@@ -29,7 +29,6 @@ class DatabaseSeeder extends Seeder
         $customers = Customer::factory(30)
             ->recycle($orders)
             ->create();
-
 
         $purchases = Purchase::factory(60)->create();
         $suppliers = Supplier::factory(20)->create();
@@ -41,7 +40,9 @@ class DatabaseSeeder extends Seeder
 
         $admin = User::factory()->create([
             'name' => 'admin',
-            'email' => 'admin@admin.com'
+            'email' => 'admin@admin.com',
+            'role' => 'admin',
+            'status' => 'active'
         ]);
 
         /*

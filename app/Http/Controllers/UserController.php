@@ -113,7 +113,29 @@ class UserController extends Controller
 
         return redirect()
             ->route('users.index')
-            ->with('success', 'User has been updated!');
+            ->with('success', 'User password has been updated!');
+    }
+
+    public function updateStatus(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:active,inactive,suspended'
+        ]);
+
+        $user->update(['status' => $validated['status']]);
+
+        if ($validated['status'] !== 'active') {
+            // Force logout if user is deactivated
+            if ($user->id === auth()->id()) {
+                auth()->logout();
+                return redirect()->route('login')
+                    ->with('error', 'Your account has been deactivated.');
+            }
+        }
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', "User status has been updated to {$validated['status']}!");
     }
 
     public function destroy(User $user)
@@ -125,10 +147,11 @@ class UserController extends Controller
             unlink(public_path('storage/profile/') . $user->photo);
         }
 
+        // Soft delete the user instead of permanent deletion
         $user->delete();
 
         return redirect()
             ->route('users.index')
-            ->with('success', 'User has been deleted!');
+            ->with('success', 'User has been deactivated!');
     }
 }

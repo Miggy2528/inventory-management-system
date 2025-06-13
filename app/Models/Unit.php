@@ -2,43 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Unit extends Model
 {
-    use HasFactory;
-
-    protected $guarded = [
-        'id',
-    ];
+    use HasFactory, Sortable;
 
     protected $fillable = [
         'name',
-        'slug',
-        'short_code'
+        'short_name',
+        'description'
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+    public $sortable = [
+        'name',
+        'short_name',
+        'created_at'
     ];
 
-    public function products(): HasMany
+    public function products()
     {
         return $this->hasMany(Product::class);
     }
-
-    public function scopeSearch($query, $value): void
-    {
-        $query->where('name', 'like', "%{$value}%")
-            ->orWhere('slug', 'like', "%{$value}%")
-            ->orWhere('short_code', 'like', "%{$value}%");
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-}
+} 

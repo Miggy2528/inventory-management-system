@@ -1,4 +1,4 @@
-@extends('layouts.tabler')
+@extends('layouts.butcher')
 
 @section('content')
 <div class="page-header d-print-none">
@@ -77,12 +77,39 @@
                             <div class="card-body">
                                 <div class="row row-cards">
                                     <div class="col-md-12">
-
                                         <x-input name="name"
                                                  id="name"
                                                  placeholder="Product name"
                                                  value="{{ old('name') }}"
                                         />
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="meat_cut_id" class="form-label">
+                                                Meat Cut
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select name="meat_cut_id" id="meat_cut_id"
+                                                    class="form-select @error('meat_cut_id') is-invalid @enderror"
+                                            >
+                                                <option selected="" disabled="">
+                                                    Select a meat cut:
+                                                </option>
+
+                                                @foreach ($meatCuts as $meatCut)
+                                                    <option value="{{ $meatCut->id }}" @if(old('meat_cut_id') == $meatCut->id) selected="selected" @endif>
+                                                        {{ $meatCut->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                            @error('meat_cut_id')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                            @enderror
+                                        </div>
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
@@ -135,8 +162,8 @@
                                             </label>
 
                                             @if ($units->count() === 1)
-                                                <select name="category_id" id="category_id"
-                                                        class="form-select @error('category_id') is-invalid @enderror"
+                                                <select name="unit_id" id="unit_id"
+                                                        class="form-select @error('unit_id') is-invalid @enderror"
                                                         readonly
                                                 >
                                                     @foreach ($units as $unit)
@@ -165,6 +192,17 @@
                                             </div>
                                             @enderror
                                         </div>
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                        <x-input type="number"
+                                                 label="Weight per Unit (kg)"
+                                                 name="weight_per_unit"
+                                                 id="weight_per_unit"
+                                                 placeholder="0.00"
+                                                 value="{{ old('weight_per_unit') }}"
+                                                 step="0.01"
+                                        />
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
@@ -208,6 +246,25 @@
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
+                                        <x-input type="text"
+                                                 label="Storage Location"
+                                                 name="storage_location"
+                                                 id="storage_location"
+                                                 placeholder="e.g., Freezer 1, Shelf 2"
+                                                 value="{{ old('storage_location') }}"
+                                        />
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                        <x-input type="date"
+                                                 label="Expiration Date"
+                                                 name="expiration_date"
+                                                 id="expiration_date"
+                                                 value="{{ old('expiration_date') }}"
+                                        />
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
                                         <x-input type="number"
                                                  label="Tax"
                                                  name="tax"
@@ -222,15 +279,12 @@
                                             <label class="form-label" for="tax_type">
                                                 {{ __('Tax Type') }}
                                             </label>
-
                                             <select name="tax_type" id="tax_type"
                                                     class="form-select @error('tax_type') is-invalid @enderror"
                                             >
-                                                @foreach(\App\Enums\TaxType::cases() as $taxType)
-                                                <option value="{{ $taxType->value }}" @selected(old('tax_type') == $taxType->value)>
-                                                    {{ $taxType->label() }}
-                                                </option>
-                                                @endforeach
+                                                <option value="">None</option>
+                                                <option value="1" @if(old('tax_type') == 1) selected @endif>Fixed</option>
+                                                <option value="2" @if(old('tax_type') == 2) selected @endif>Percentage</option>
                                             </select>
 
                                             @error('tax_type')
@@ -243,16 +297,16 @@
 
                                     <div class="col-md-12">
                                         <div class="mb-3">
-                                            <label for="notes" class="form-label">
+                                            <label class="form-label" for="notes">
                                                 {{ __('Notes') }}
                                             </label>
-
-                                            <textarea name="notes"
-                                                      id="notes"
-                                                      rows="5"
-                                                      class="form-control @error('notes') is-invalid @enderror"
-                                                      placeholder="Product notes"
-                                            ></textarea>
+                                            <textarea
+                                                name="notes"
+                                                id="notes"
+                                                class="form-control @error('notes') is-invalid @enderror"
+                                                rows="3"
+                                                placeholder="Product notes..."
+                                            >{{ old('notes') }}</textarea>
 
                                             @error('notes')
                                             <div class="invalid-feedback">
@@ -263,15 +317,10 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="card-footer text-end">
-                                <x-button.save type="submit">
-                                    {{ __('Save') }}
-                                </x-button.save>
-
-                                <x-button.back route="{{ route('products.index') }}">
-                                    {{ __('Cancel') }}
-                                </x-button.back>
+                                <button type="submit" class="btn btn-primary">
+                                    {{ __('Create') }}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -282,6 +331,20 @@
 </div>
 @endsection
 
-@pushonce('page-scripts')
-    <script src="{{ asset('assets/js/img-preview.js') }}"></script>
-@endpushonce
+@push('page-scripts')
+    <script>
+        function previewImage() {
+            const image = document.querySelector('#image');
+            const imgPreview = document.querySelector('#image-preview');
+
+            imgPreview.style.display = 'block';
+
+            const oFReader = new FileReader();
+            oFReader.readAsDataURL(image.files[0]);
+
+            oFReader.onload = function(oFREvent) {
+                imgPreview.src = oFREvent.target.result;
+            }
+        }
+    </script>
+@endpush

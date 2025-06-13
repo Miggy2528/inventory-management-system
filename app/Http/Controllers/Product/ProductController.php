@@ -8,6 +8,7 @@ use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Unit;
+use App\Models\MeatCut;
 use Illuminate\Http\Request;
 use Picqer\Barcode\BarcodeGeneratorHTML;
 
@@ -28,6 +29,7 @@ class ProductController extends Controller
     {
         $categories = Category::all(['id', 'name']);
         $units = Unit::all(['id', 'name']);
+        $meatCuts = MeatCut::all(['id', 'name']);
 
         if ($request->has('category')) {
             $categories = Category::whereSlug($request->get('category'))->get();
@@ -40,6 +42,7 @@ class ProductController extends Controller
         return view('products.create', [
             'categories' => $categories,
             'units' => $units,
+            'meatCuts' => $meatCuts,
         ]);
     }
 

@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
-use App\Http\Requests\Supplier\StoreSupplierRequest;
-use App\Http\Requests\Supplier\UpdateSupplierRequest;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SupplierController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Supplier::class, 'supplier');
+    }
+
     public function index()
     {
-        $suppliers = Supplier::all();
-
-        return view('suppliers.index', [
-            'suppliers' => $suppliers
-        ]);
+        $suppliers = Supplier::latest()->paginate(10);
+        return view('suppliers.index', compact('suppliers'));
     }
 
     public function create()
@@ -22,90 +26,106 @@ class SupplierController extends Controller
         return view('suppliers.create');
     }
 
-    public function store(StoreSupplierRequest $request)
+    public function store(Request $request)
     {
-        $supplier = Supplier::create($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:suppliers',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'shopname' => 'required|string|max:255',
+            'type' => 'required|string|in:wholesale,retail,both',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'status' => 'required|in:active,inactive',
+            'notes' => 'nullable|string'
+        ]);
 
-        /**
-         * Handle upload an image
-         */
-        if($request->hasFile('photo')){
-            $file = $request->file('photo');
-            $filename = hexdec(uniqid()).'.'.$file->getClientOriginalExtension();
-
-            $file->storeAs('suppliers/', $filename, 'public');
-            $supplier->update([
-                'photo' => $filename
-            ]);
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $filename = Str::slug($request->name) . '-' . time() . '.' . $photo->getClientOriginalExtension();
+            $photo->storeAs('public/suppliers', $filename);
+            $validated['photo'] = $filename;
         }
 
-        return redirect()
-            ->route('suppliers.index')
-            ->with('success', 'New supplier has been created!');
+        Supplier::create($validated);
+
+        return redirect()->route('suppliers.index')
+            ->with('success', 'Supplier created successfully.');
     }
 
     public function show(Supplier $supplier)
     {
-        $supplier->loadMissing('purchases')->get();
-
-        return view('suppliers.show', [
-            'supplier' => $supplier
-        ]);
+        $products = $supplier->products;
+        return view('suppliers.show', compact('supplier', 'products'));
     }
 
     public function edit(Supplier $supplier)
     {
-        return view('suppliers.edit', [
-            'supplier' => $supplier
-        ]);
+        return view('suppliers.edit', compact('supplier'));
     }
 
-    public function update(UpdateSupplierRequest $request, Supplier $supplier)
+    public function update(Request $request, Supplier $supplier)
     {
-        //
-        $supplier->update($request->except('photo'));
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:suppliers,email,' . $supplier->id,
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'shopname' => 'required|string|max:255',
+            'type' => 'required|string|in:wholesale,retail,both',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'status' => 'required|in:active,inactive',
+            'notes' => 'nullable|string'
+        ]);
 
-        /**
-         * Handle upload image with Storage.
-         */
-        if($request->hasFile('photo')){
-
-            // Delete Old Photo
-            if($supplier->photo){
-                unlink(public_path('storage/suppliers/') . $supplier->photo);
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($supplier->photo) {
+                Storage::delete('public/suppliers/' . $supplier->photo);
             }
-
-            // Prepare New Photo
-            $file = $request->file('photo');
-            $fileName = hexdec(uniqid()).'.'.$file->getClientOriginalExtension();
-
-            // Store an image to Storage
-            $file->storeAs('suppliers/', $fileName, 'public');
-
-            // Save DB
-            $supplier->update([
-                'photo' => $fileName
-            ]);
+            
+            $photo = $request->file('photo');
+            $filename = Str::slug($request->name) . '-' . time() . '.' . $photo->getClientOriginalExtension();
+            $photo->storeAs('public/suppliers', $filename);
+            $validated['photo'] = $filename;
         }
 
-        return redirect()
-            ->route('suppliers.index')
-            ->with('success', 'Supplier has been updated!');
+        $supplier->update($validated);
+
+        return redirect()->route('suppliers.index')
+            ->with('success', 'Supplier updated successfully.');
     }
 
     public function destroy(Supplier $supplier)
     {
-        /**
-         * Delete photo if exists.
-         */
-        if($supplier->photo){
-            unlink(public_path('storage/suppliers/') . $supplier->photo);
+        if ($supplier->photo) {
+            Storage::delete('public/suppliers/' . $supplier->photo);
         }
-
+        
         $supplier->delete();
 
-        return redirect()
-            ->route('suppliers.index')
-            ->with('success', 'Supplier has been deleted!');
+        return redirect()->route('suppliers.index')
+            ->with('success', 'Supplier deleted successfully.');
+    }
+
+    public function assignProducts(Request $request, Supplier $supplier)
+    {
+        $validated = $request->validate([
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'exists:products,id'
+        ]);
+
+        $supplier->products()->sync($validated['product_ids']);
+
+        return redirect()->route('suppliers.show', $supplier)
+            ->with('success', 'Products assigned successfully.');
+    }
+
+    public function deactivate(Supplier $supplier)
+    {
+        $supplier->update(['status' => 'inactive']);
+
+        return redirect()->route('suppliers.index')
+            ->with('success', 'Supplier deactivated successfully.');
     }
 }

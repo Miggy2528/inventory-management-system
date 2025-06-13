@@ -46,37 +46,37 @@
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('invoice_no')" href="#" role="button">
                             {{ __('Invoice No.') }}
-                            @include('inclues._sort-icon', ['field' => 'invoice_no'])
+                            @include('includes._sort-icon', ['field' => 'invoice_no'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('customer_id')" href="#" role="button">
                             {{ __('Customer') }}
-                            @include('inclues._sort-icon', ['field' => 'customer_id'])
+                            @include('includes._sort-icon', ['field' => 'customer_id'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('order_date')" href="#" role="button">
                             {{ __('Date') }}
-                            @include('inclues._sort-icon', ['field' => 'order_date'])
+                            @include('includes._sort-icon', ['field' => 'order_date'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('payment_type')" href="#" role="button">
-                            {{ __('Paymet') }}
-                            @include('inclues._sort-icon', ['field' => 'payment_type'])
+                            {{ __('Payment') }}
+                            @include('includes._sort-icon', ['field' => 'payment_type'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('total')" href="#" role="button">
                             {{ __('Total') }}
-                            @include('inclues._sort-icon', ['field' => 'total'])
+                            @include('includes._sort-icon', ['field' => 'total'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('order_status')" href="#" role="button">
                             {{ __('Status') }}
-                            @include('inclues._sort-icon', ['field' => 'order_status'])
+                            @include('includes._sort-icon', ['field' => 'order_status'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
@@ -103,7 +103,7 @@
                         {{ $order->payment_type }}
                     </td>
                     <td class="align-middle text-center">
-                        {{ Number::currency($order->total, 'EUR') }}
+                        ₱{{ number_format($order->total, 2) }}
                     </td>
                     <td class="align-middle text-center">
                         <x-status dot color="{{ $order->order_status === \App\Enums\OrderStatus::COMPLETE ? 'green' : 'orange' }}"
