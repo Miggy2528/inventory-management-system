@@ -25,7 +25,7 @@
                         <p class="mb-1"><strong>Min. Stock:</strong> {{ $cut->minimum_stock_level }}</p>
                     </div>
                     <div class="card-footer bg-white border-0 d-flex justify-content-between">
-                        <a href="{{ route('products.create', ['meat_cut_id' => $cut->id]) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('staff.inventory.create', ['meat_cut_id' => $cut->id]) }}" class="btn btn-primary btn-sm">
                             <i class="fas fa-plus me-1"></i> Add to Inventory
                         </a>
                         <a href="{{ route('meat-cuts.edit', $cut) }}" class="btn btn-outline-secondary btn-sm">
@@ -45,4 +45,4 @@
         @endforelse
     </div>
 </div>
-@endsection
+@endsection 

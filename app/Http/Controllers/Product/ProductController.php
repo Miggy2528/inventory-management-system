@@ -16,12 +16,9 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::select('id', 'name')
-            ->limit(1)
-            ->get();
-
+        $meatCuts = MeatCut::orderBy('name')->get();
         return view('products.index', [
-            'products' => $products,
+            'meatCuts' => $meatCuts,
         ]);
     }
 

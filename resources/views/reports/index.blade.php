@@ -22,9 +22,11 @@
                                         <a href="{{ route('reports.inventory') }}" class="btn btn-primary">
                                             <i class="fas fa-chart-bar"></i> View Inventory Report
                                         </a>
+                                        {{--
                                         <a href="{{ route('reports.export.inventory') }}" class="btn btn-success">
                                             <i class="fas fa-file-export"></i> Export to CSV
                                         </a>
+                                        --}}
                                     </div>
                                 </div>
                             </div>
@@ -42,9 +44,11 @@
                                         <a href="{{ route('reports.sales') }}" class="btn btn-primary">
                                             <i class="fas fa-chart-bar"></i> View Sales Report
                                         </a>
+                                        {{--
                                         <a href="{{ route('reports.export.sales') }}" class="btn btn-success">
                                             <i class="fas fa-file-export"></i> Export to CSV
                                         </a>
+                                        --}}
                                     </div>
                                 </div>
                             </div>

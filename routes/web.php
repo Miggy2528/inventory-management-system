@@ -151,6 +151,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{movement}/receive', [InventoryController::class, 'receive'])->name('receive');
         Route::put('/{product}/discard', [InventoryController::class, 'markAsDiscarded'])->name('discard');
     });
+
+    Route::middleware(['auth', 'role:staff'])->prefix('staff')->name('staff.')->group(function () {
+        Route::get('products', [\App\Http\Controllers\Staff\InventoryController::class, 'products'])->name('products.index');
+    });
 });
 
 require __DIR__.'/auth.php';

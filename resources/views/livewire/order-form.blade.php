@@ -75,19 +75,17 @@
                 {{--- Unit Price ---}}
                 <td class="align-middle text-center">
                     @if($invoiceProduct['is_saved'])
-                        {{ $unit_cost = number_format($invoiceProduct['product_price'], 2) }}
-
+                        ₱{{ number_format($invoiceProduct['product_price'], 2) }}
                         <input type="hidden"
                                name="invoiceProducts[{{$index}}][unitcost]"
-                               value="{{ $unit_cost }}"
+                               value="{{ number_format($invoiceProduct['product_price'], 2) }}"
                         >
                     @endif
                 </td>
 
                 {{--- Total ---}}
                 <td class="align-middle text-center">
-                    {{ $product_total = $invoiceProduct['product_price'] * $invoiceProduct['quantity'] }}
-
+                    ₱{{ number_format($product_total, 2) }}
                     <input type="hidden"
                            name="invoiceProducts[{{$index}}][total]"
                            value="{{ $product_total }}"
@@ -126,8 +124,7 @@
                     Subtotal
                 </th>
                 <td class="text-center">
-{{--                    ${{ number_format($subtotal, 2) }}--}}
-                    {{ Number::currency($subtotal, 'EUR') }}
+                    ₱{{ number_format($subtotal, 2) }}
                 </td>
             </tr>
             <tr>
@@ -150,7 +147,7 @@
                     Total
                 </th>
                 <td class="text-center">
-                    {{ Number::currency($total, 'EUR') }}
+                    ₱{{ number_format($total, 2) }}
                     <input type="hidden" name="total_amount" value="{{ $total }}">
                 </td>
             </tr>

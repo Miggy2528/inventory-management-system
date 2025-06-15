@@ -168,4 +168,10 @@ class InventoryController extends Controller
 
         return view('staff.inventory.discard', compact('expiredProducts'));
     }
+
+    public function products()
+    {
+        $meatCuts = \App\Models\MeatCut::orderBy('name')->get();
+        return view('staff.products.index', compact('meatCuts'));
+    }
 } 

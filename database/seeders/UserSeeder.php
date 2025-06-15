@@ -16,23 +16,32 @@ class UserSeeder extends Seeder
         $users = collect([
             [
                 'name' => 'Admin',
+                'username' => 'admin',
                 'email' => 'admin@admin.com',
                 'email_verified_at' => now(),
                 'password' => bcrypt('password'),
+                'role' => 'admin',
+                'status' => 'active',
                 'created_at' => now()
             ],
             [
-                'name' => 'quest',
-                'email' => 'quest@quest.com',
+                'name' => 'Staff',
+                'username' => 'staff',
+                'email' => 'staff@staff.com',
                 'email_verified_at' => now(),
                 'password' => bcrypt('password'),
+                'role' => 'staff',
+                'status' => 'active',
                 'created_at' => now()
             ],
             [
-                'name' => 'user',
-                'email' => 'user@user.com',
+                'name' => 'Customer',
+                'username' => 'customer',
+                'email' => 'customer@customer.com',
                 'email_verified_at' => now(),
                 'password' => bcrypt('password'),
+                'role' => 'customer',
+                'status' => 'active',
                 'created_at' => now()
             ]
         ]);
