@@ -21,6 +21,14 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                $user = Auth::guard($guard)->user();
+                
+                // If it's a customer, redirect to customer dashboard
+                if ($user instanceof \App\Models\Customer) {
+                    return redirect()->route('customer.dashboard');
+                }
+                
+                // For regular users, redirect to main dashboard
                 return redirect(RouteServiceProvider::HOME);
             }
         }

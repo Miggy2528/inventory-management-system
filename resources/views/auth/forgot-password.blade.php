@@ -1,18 +1,22 @@
 @extends('layouts.auth')
 
 @section('content')
+{{-- Session status and error message display --}}
+@if (session('status'))
+    <div class="alert alert-success">{{ session('status') }}</div>
+@endif
+@if (session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
 <form class="card card-md" action="{{ route('password.email') }}" method="post" autocomplete="off" novalidate>
     @csrf
-
     <div class="card-body">
         <h2 class="card-title text-center mb-4">
             Forgot password
         </h2>
-
         <p class="text-secondary mb-4">
             Enter your email address and your password will be reset and emailed to you.
         </p>
-
         <div class="mb-3">
             <label for="email" class="form-label">
                 Email address
@@ -21,7 +25,6 @@
                    class="form-control @error('email') is-invalid @enderror"
                    placeholder="Enter email"
             >
-
             @error('email')
             <div class="invalid-feedback">
                 {{ $message }}

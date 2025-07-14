@@ -4,7 +4,7 @@
 <div class="card card-md">
     <div class="card-body">
         <h2 class="h2 text-center mb-4">
-            Login to your account
+            Staff/Admin Login
         </h2>
         <form action="{{ route('login') }}" method="POST" autocomplete="off">
             @csrf
@@ -22,7 +22,7 @@
 
             <div class="form-footer">
                 <x-button type="submit" class="w-100">
-                    {{ __('Sign in') }}
+                    {{ __('Sign in as Staff/Admin') }}
                 </x-button>
             </div>
         </form>
@@ -30,7 +30,7 @@
 </div>
 
 <div class="text-center mt-3 text-gray-600">
-    <p>Don't have an account yet?
+    <p>Staff/Admin? Don't have an account?
         <a href="{{ route('register') }}" class="text-blue-500 hover:text-blue-700 focus:outline-none focus:underline" tabindex="-1">
             Sign up
         </a>
@@ -41,6 +41,14 @@
             I forgot my password
         </a>
     </p>
-</div>
 
+    <hr class="my-4">
+    
+    <p class="text-muted small">
+        <strong>Staff/Admin:</strong> Manage inventory, orders, and system settings<br>
+        <a href="{{ route('customer.login') }}" class="text-primary hover:text-primary-dark focus:outline-none focus:underline">
+            Customer? Click here to login
+        </a>
+    </p>
+</div>
 @endsection

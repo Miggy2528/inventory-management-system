@@ -104,4 +104,16 @@ class CustomerController extends Controller
             ->back()
             ->with('success', 'Customer has been deleted!');
     }
+
+    /**
+     * Show customer profile (for authenticated customers)
+     */
+    public function profile()
+    {
+        $customer = auth()->user();
+        
+        return view('customer.profile', [
+            'customer' => $customer
+        ]);
+    }
 }

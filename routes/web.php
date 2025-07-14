@@ -20,6 +20,10 @@ use App\Http\Controllers\Product\ProductImportController;
 use App\Http\Controllers\MeatCutController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Staff\InventoryController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,11 +40,99 @@ Route::get('php/', function () {
     return phpinfo();
 });
 
+Route::get('test-customer-login', function () {
+    return 'Customer login route is working!';
+})->name('test.customer.login');
+
 Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
+
+Route::get('/dashboard', function () {
     return redirect()->route('login');
 });
 
-Route::middleware(['auth'])->group(function () {
+// ============================================================================
+// CUSTOMER ROUTES - FIXED TO PREVENT REDIRECT LOOPS
+// ============================================================================
+
+// Customer Authentication Routes (Web) - GUEST ONLY
+// Uses 'guest:web_customer' middleware - only for non-authenticated customers
+Route::middleware('guest:web_customer')->group(function () {
+    Route::get('/customer/register', [App\Http\Controllers\Customer\WebAuthController::class, 'showRegistrationForm'])->name('customer.register');
+    Route::post('/customer/register', [App\Http\Controllers\Customer\WebAuthController::class, 'register'])->name('customer.register.store');
+    Route::get('/customer/login', [App\Http\Controllers\Customer\WebAuthController::class, 'showLoginForm'])->name('customer.login');
+    Route::post('/customer/login', [App\Http\Controllers\Customer\WebAuthController::class, 'login'])->name('customer.login.store');
+});
+
+// Customer Password Reset Routes - GUEST ONLY
+// Uses 'guest:web_customer' middleware for password reset requests
+Route::prefix('customer')->name('customer.')->middleware('guest:web_customer')->group(function () {
+    Route::get('forgot-password', [App\Http\Controllers\Customer\CustomerPasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('forgot-password', [App\Http\Controllers\Customer\CustomerPasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('reset-password/{token}', [App\Http\Controllers\Customer\CustomerPasswordResetController::class, 'showResetForm'])->name('password.reset');
+    Route::post('reset-password', [App\Http\Controllers\Customer\CustomerPasswordResetController::class, 'reset'])->name('password.update');
+});
+
+// Customer Email Verification Routes - AUTHENTICATED ONLY
+// Uses 'auth:web_customer' middleware - only for authenticated customers
+Route::prefix('customer')->name('customer.')->middleware(['auth:web_customer'])->group(function () {
+    Route::get('email/verify', [App\Http\Controllers\Customer\CustomerVerificationController::class, 'show'])->name('verification.notice');
+    Route::get('email/verify/{id}/{hash}', [App\Http\Controllers\Customer\CustomerVerificationController::class, 'verify'])->name('verification.verify');
+    Route::post('email/resend', [App\Http\Controllers\Customer\CustomerVerificationController::class, 'resend'])->name('verification.resend');
+});
+
+// Customer Protected Routes - AUTHENTICATED + VERIFIED ONLY
+// Uses 'customer.web.auth' middleware - requires authentication AND email verification
+Route::middleware(['customer.web.auth'])->group(function () {
+    Route::get('/customer/dashboard', function () {
+        return view('customer.dashboard');
+    })->name('customer.dashboard');
+    Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('customer.orders');
+    Route::get('/my-profile', [CustomerController::class, 'profile'])->name('customer.profile');
+    Route::post('/customer/logout', [App\Http\Controllers\Customer\WebAuthController::class, 'logout'])->name('customer.logout');
+    
+    // Customer Shopping Cart
+    Route::get('/cart', [App\Http\Controllers\Customer\CartController::class, 'index'])->name('customer.cart');
+    Route::post('/cart/add', [App\Http\Controllers\Customer\CartController::class, 'add'])->name('customer.cart.add');
+    Route::put('/cart/update/{rowId}', [App\Http\Controllers\Customer\CartController::class, 'update'])->name('customer.cart.update');
+    Route::delete('/cart/remove/{rowId}', [App\Http\Controllers\Customer\CartController::class, 'remove'])->name('customer.cart.remove');
+    Route::delete('/cart/clear', [App\Http\Controllers\Customer\CartController::class, 'clear'])->name('customer.cart.clear');
+    
+    // Customer Checkout
+    Route::get('/checkout', [App\Http\Controllers\Customer\CheckoutController::class, 'index'])->name('customer.checkout');
+    Route::post('/checkout/place-order', [App\Http\Controllers\Customer\CheckoutController::class, 'placeOrder'])->name('customer.checkout.place-order');
+});
+
+// Customer Product Routes - Using simpler auth middleware
+Route::middleware(['auth:web_customer'])->group(function () {
+    Route::prefix('customer')->group(function () {
+        Route::get('/products', [\App\Http\Controllers\Customer\ProductController::class, 'index'])->name('customer.products');
+        Route::get('/products/{product}', [\App\Http\Controllers\Customer\ProductController::class, 'show'])->name('customer.products.show');
+        Route::get('/categories/{category}', [\App\Http\Controllers\Customer\ProductController::class, 'category'])->name('customer.products.category');
+    });
+});
+
+// ============================================================================
+// STAFF/ADMIN ROUTES
+// ============================================================================
+
+// Staff/Admin Guest Routes
+Route::middleware('guest:web')->group(function () {
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
+});
+
+// Staff/Admin Protected Routes
+Route::middleware(['auth:web'])->group(function () {
+    // Admin/Staff logout
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -72,12 +164,6 @@ Route::middleware(['auth'])->group(function () {
         
         // Supplier Management
         Route::resource('/suppliers', SupplierController::class);
-    });
-
-    // Customer Routes
-    Route::middleware(['role:customer'])->group(function () {
-        Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('customer.orders');
-        Route::get('/my-profile', [CustomerController::class, 'profile'])->name('customer.profile');
     });
 
     // Shared Routes (All Authenticated Users)
@@ -123,8 +209,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Supplier Management Routes
     Route::resource('suppliers', SupplierController::class);
-    Route::post('suppliers/{supplier}/assign-products', [SupplierController::class, 'assignProducts'])->name('suppliers.assign-products');
-    Route::patch('suppliers/{supplier}/deactivate', [SupplierController::class, 'deactivate'])->name('suppliers.deactivate');
 
     // Reports Routes
     Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -149,7 +233,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/follow-up', [InventoryController::class, 'followUp'])->name('follow-up');
         Route::get('/discard', [InventoryController::class, 'discard'])->name('discard');
         Route::put('/{movement}/receive', [InventoryController::class, 'receive'])->name('receive');
-        Route::put('/{product}/discard', [InventoryController::class, 'markAsDiscarded'])->name('discard');
+        Route::put('/{product}/discard', [InventoryController::class, 'markAsDiscarded'])->name('mark-discarded');
     });
 
     Route::middleware(['auth', 'role:staff'])->prefix('staff')->name('staff.')->group(function () {
@@ -158,8 +242,3 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-Route::get('test/', function (){
-//    return view('test');
-    return view('orders.create');
-});

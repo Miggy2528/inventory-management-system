@@ -20,6 +20,7 @@ class Product extends Model
         'quantity',
         'weight_per_unit',
         'price_per_kg',
+        'selling_price',
         'total_weight',
         'storage_location',
         'expiration_date',
@@ -35,6 +36,7 @@ class Product extends Model
         'quantity',
         'weight_per_unit',
         'price_per_kg',
+        'selling_price',
         'total_weight',
         'expiration_date',
         'processing_date'
@@ -57,10 +59,8 @@ class Product extends Model
             });
     }
 
-    public function meatCut()
-    {
-        return $this->belongsTo(MeatCut::class);
-    }
+    // Note: meatCut relationship removed as products table doesn't have meat_cut_id field
+    // Use separate meat_cuts table for meat-specific products
 
     public function category()
     {

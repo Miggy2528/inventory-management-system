@@ -54,7 +54,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <form action="{{ route('staff.inventory.discard', $product) }}" 
+                                                <form action="{{ route('staff.inventory.mark-discarded', $product) }}" 
                                                       method="POST" 
                                                       class="d-inline">
                                                     @csrf

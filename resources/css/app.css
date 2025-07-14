@@ -1,1 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* Primary color scheme for customer portal */
+.bg-primary {
+    background-color: #3b82f6;
+}
+
+.bg-primary-dark {
+    background-color: #2563eb;
+}
+
+.bg-primary-light {
+    background-color: #dbeafe;
+}
+
+.bg-primary-lighter {
+    background-color: #eff6ff;
+}
+
+.text-primary {
+    color: #3b82f6;
+}
+
+.text-primary-dark {
+    color: #2563eb;
+}
+
+.border-primary {
+    border-color: #3b82f6;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.hover\:text-primary-dark:hover {
+    color: #2563eb;
+}
+
+.hover\:bg-primary-dark:hover {
+    background-color: #2563eb;
+}
+
+.hover\:bg-primary-lighter:hover {
+    background-color: #eff6ff;
+}

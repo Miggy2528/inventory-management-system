@@ -109,4 +109,21 @@ class OrderController extends Controller
             'order' => $order,
         ]);
     }
+
+    /**
+     * Show customer's orders (for authenticated customers)
+     */
+    public function myOrders()
+    {
+        $customer = auth()->user();
+        $orders = Order::where('customer_id', $customer->id)
+                      ->with(['details.product'])
+                      ->latest()
+                      ->get();
+        
+        return view('customer.orders', [
+            'orders' => $orders,
+            'customer' => $customer
+        ]);
+    }
 }

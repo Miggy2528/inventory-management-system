@@ -174,4 +174,14 @@ class InventoryController extends Controller
         $meatCuts = \App\Models\MeatCut::orderBy('name')->get();
         return view('staff.products.index', compact('meatCuts'));
     }
+
+    public function markAsDiscarded(Product $product)
+    {
+        // Since products table doesn't have status field, we'll set quantity to 0
+        $product->update(['quantity' => 0]);
+        
+        return redirect()
+            ->route('staff.inventory.discard')
+            ->with('success', 'Product marked as discarded successfully.');
+    }
 } 
