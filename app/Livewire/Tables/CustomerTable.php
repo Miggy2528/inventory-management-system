@@ -38,6 +38,7 @@ class CustomerTable extends Component
                 ->search($this->search)
                 ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                 ->paginate($this->perPage),
+                
         ]);
     }
 }

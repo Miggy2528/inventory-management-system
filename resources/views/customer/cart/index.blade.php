@@ -187,7 +187,7 @@
                                         </form>
                                     </div>
                                     
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         <div class="text-center">
                                             <div class="fw-bold">₱{{ number_format($item->subtotal, 2) }}</div>
                                         </div>

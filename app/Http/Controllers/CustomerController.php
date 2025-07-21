@@ -26,13 +26,10 @@ class CustomerController extends Controller
     {
         $customer = Customer::create($request->all());
 
-        /**
-         * Handle upload an image
-         */
-        if($request->hasFile('photo'))
-        {
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = hexdec(uniqid()).'.'.$file->getClientOriginalExtension();
+            $filename = hexdec(uniqid()) . '.' . $file->getClientOriginalExtension();
 
             $file->storeAs('customers/', $filename, 'public');
             $customer->update([
@@ -63,39 +60,48 @@ class CustomerController extends Controller
 
     public function update(UpdateCustomerRequest $request, Customer $customer)
     {
-        //
+        $customer = auth()->user(); 
+        // Update without photo first
         $customer->update($request->except('photo'));
 
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($customer->photo) {
+                $oldPhotoPath = public_path('storage/customers/') . $customer->photo;
 
-            // Delete Old Photo
-            if($customer->photo){
-                unlink(public_path('storage/customers/') . $customer->photo);
+                if (file_exists($oldPhotoPath)) {
+                    unlink($oldPhotoPath);
+                } else {
+                    \Log::warning("Old customer photo not found for deletion: {$oldPhotoPath}");
+                }
             }
 
-            // Prepare New Photo
+            // Save new photo
             $file = $request->file('photo');
-            $fileName = hexdec(uniqid()).'.'.$file->getClientOriginalExtension();
+            $fileName = hexdec(uniqid()) . '.' . $file->getClientOriginalExtension();
 
-            // Store an image to Storage
-            $file->storeAs('customers/', $fileName, 'public');
+            $file->storeAs('customers', $fileName, 'public');
 
-            // Save DB
             $customer->update([
                 'photo' => $fileName
             ]);
         }
 
         return redirect()
-            ->route('customers.index')
+            ->route('customer.profile')
             ->with('success', 'Customer has been updated!');
     }
 
     public function destroy(Customer $customer)
     {
-        if($customer->photo)
-        {
-            unlink(public_path('storage/customers/') . $customer->photo);
+        if ($customer->photo) {
+            $photoPath = public_path('storage/customers/') . $customer->photo;
+
+            if (file_exists($photoPath)) {
+                unlink($photoPath);
+            } else {
+                \Log::warning("Customer photo not found for deletion: {$photoPath}");
+            }
         }
 
         $customer->delete();
@@ -111,7 +117,7 @@ class CustomerController extends Controller
     public function profile()
     {
         $customer = auth()->user();
-        
+
         return view('customer.profile', [
             'customer' => $customer
         ]);

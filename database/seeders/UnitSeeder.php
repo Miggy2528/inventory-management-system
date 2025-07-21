@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Unit;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class UnitSeeder extends Seeder
 {
@@ -15,23 +14,33 @@ class UnitSeeder extends Seeder
     {
         $units = collect([
             [
-                'name' => 'Meters',
-                'slug' => 'meters',
-                'short_code' => 'm'
+                'name' => 'Kilogram',
+                'slug' => 'kilogram',
+                'short_code' => 'kg'
             ],
             [
-                'name' => 'Centimeters',
-                'slug' => 'centimeters',
-                'short_code' => 'cm'
+                'name' => 'Gram',
+                'slug' => 'gram',
+                'short_code' => 'g'
             ],
             [
                 'name' => 'Piece',
                 'slug' => 'piece',
                 'short_code' => 'pc'
+            ],
+            [
+                'name' => 'Pack',
+                'slug' => 'pack',
+                'short_code' => 'pk'
+            ],
+            [
+                'name' => 'Box',
+                'slug' => 'box',
+                'short_code' => 'bx'
             ]
         ]);
 
-        $units->each(function ($unit){
+        $units->each(function ($unit) {
             Unit::insert($unit);
         });
     }

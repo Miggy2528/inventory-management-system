@@ -170,16 +170,21 @@
 
                         <!-- Category Filter -->
                         <div class="mb-3">
-                            <label for="category" class="form-label">Category</label>
-                            <select class="form-select" id="category" name="category">
-                                <option value="">All Categories</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name ?? 'Uncategorized' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+    <label for="category" class="form-label">Category</label>
+    <select class="form-select @error('category') is-invalid @enderror" id="category" name="category">
+        <option value="">All Categories</option>
+        <option value="beef" {{ old('category', $category ?? '') == 'beef' ? 'selected' : '' }}>Beef</option>
+        <option value="chicken" {{ old('category', $category ?? '') == 'chicken' ? 'selected' : '' }}>Chicken</option>
+        <option value="pig" {{ old('category', $category ?? '') == 'pig' ? 'selected' : '' }}>Pig</option>
+        <option value="goat" {{ old('category', $category ?? '') == 'goat' ? 'selected' : '' }}>Goat</option>
+    </select>
+    @error('category')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
+</div>
+
 
                         <!-- Sort -->
                         <div class="mb-3">

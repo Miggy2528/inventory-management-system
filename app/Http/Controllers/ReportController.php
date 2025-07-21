@@ -23,7 +23,7 @@ class ReportController extends Controller
 
     public function inventory()
     {
-        $products = Product::with(['category', 'meatCut'])->get();
+        $products = Product::with(['category', 'meatCut','inventoryMovements'])->get();
 
         // Initialize current stock to 0 if no inventory movements exist
         $products->each(function ($product) {

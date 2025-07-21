@@ -22,6 +22,8 @@ class UpdateCustomerRequest extends FormRequest
      */
     public function rules(): array
     {
+        $customerId = auth()->id(); // Get the logged-in customer ID
+    
         return [
             'photo' => [
                 'image',
@@ -37,13 +39,13 @@ class UpdateCustomerRequest extends FormRequest
                 'required',
                 'email',
                 'max:50',
-                Rule::unique('customers', 'email')->ignore($this->customer)
+                Rule::unique('customers', 'email')->ignore($customerId),
             ],
             'phone' => [
                 'required',
                 'string',
                 'max:25',
-                Rule::unique('customers', 'phone')->ignore($this->customer),
+                Rule::unique('customers', 'phone')->ignore($customerId),
             ],
             'account_holder' => [
                 'max:50'

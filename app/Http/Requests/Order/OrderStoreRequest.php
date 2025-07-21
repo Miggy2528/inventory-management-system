@@ -21,6 +21,9 @@ class OrderStoreRequest extends FormRequest
             'customer_id' => 'required',
             'payment_type' => 'required',
             'pay' => 'required|numeric',
+            'gcash_reference' => 'required|string|max:255',
+            'proof_of_payment' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+
         ];
     }
 

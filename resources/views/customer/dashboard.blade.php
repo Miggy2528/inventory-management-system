@@ -14,39 +14,44 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-color: #8B0000;
             --secondary-color: #4A0404;
             --accent-color: #FF4136;
         }
-        
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background-color: #f8f9fa;
         }
-        
+
         .navbar-brand {
             font-weight: bold;
             color: var(--primary-color) !important;
         }
-        
+
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-primary:hover {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
         }
-        
+
+        .btn-equal {
+            width: 100%;
+            min-height: 45px;
+        }
+
         .card {
             border: none;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         }
-        
+
         .card-header {
             background-color: var(--primary-color);
             color: white;
@@ -62,7 +67,7 @@
                 <i class="fas fa-drumstick-bite me-2"></i>
                 Yannis Meatshop - Customer Portal
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="{{ route('customer.products') }}">
                     <i class="fas fa-store me-1"></i>Products
@@ -130,6 +135,7 @@
 
         <!-- Dashboard Cards -->
         <div class="row">
+            <!-- Shop Now -->
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <div class="card-header">
@@ -138,16 +144,17 @@
                             Browse Products
                         </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column justify-content-between">
                         <p class="card-text">Explore our fresh meat products and add them to your cart.</p>
-                        <a href="{{ route('customer.products') }}" class="btn btn-primary">
+                        <a href="{{ route('customer.products') }}" class="btn btn-primary btn-equal mt-auto">
                             <i class="fas fa-shopping-bag me-1"></i>
                             Shop Now
                         </a>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- View Orders -->
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <div class="card-header">
@@ -156,16 +163,17 @@
                             My Orders
                         </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column justify-content-between">
                         <p class="card-text">View and track your order history.</p>
-                        <a href="{{ route('customer.orders') }}" class="btn btn-primary">
+                        <a href="{{ route('customer.orders') }}" class="btn btn-primary btn-equal mt-auto">
                             <i class="fas fa-eye me-1"></i>
                             View Orders
                         </a>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Edit Profile -->
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <div class="card-header">
@@ -174,9 +182,9 @@
                             My Profile
                         </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column justify-content-between">
                         <p class="card-text">Update your personal information and preferences.</p>
-                        <a href="{{ route('customer.profile') }}" class="btn btn-primary">
+                        <a href="{{ route('customer.profile') }}" class="btn btn-primary btn-equal mt-auto">
                             <i class="fas fa-edit me-1"></i>
                             Edit Profile
                         </a>
@@ -190,4 +198,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
-</html> 
+</html>

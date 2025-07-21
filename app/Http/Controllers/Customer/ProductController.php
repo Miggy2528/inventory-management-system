@@ -83,6 +83,7 @@ class ProductController extends Controller
             ->paginate(12);
 
         $categories = Category::all();
+   
 
         return view('customer.products.category', compact('products', 'category', 'categories'));
     }

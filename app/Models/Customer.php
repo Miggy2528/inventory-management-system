@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Enums\OrderStatus;
 
+
+
 class Customer extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -178,4 +180,6 @@ class Customer extends Authenticatable
     {
         return $query->where('status', 'active');
     }
+
+
 }

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
@@ -16,37 +15,25 @@ class CategorySeeder extends Seeder
         $categories = collect([
             [
                 'id'    => 1,
-                'name'  => 'Laptops',
-                'slug'  => 'laptops',
+                'name'  => 'Raw Meat',
+                'slug'  => 'raw-meat',
                 'created_at' => now()
             ],
             [
                 'id'    => 2,
-                'name'  => 'Hardware',
-                'slug'  => 'hardware',
+                'name'  => 'Processed Meat',
+                'slug'  => 'processed-meat',
                 'created_at' => now()
             ],
             [
                 'id'    => 3,
-                'name'  => 'Smartphones',
-                'slug'  => 'smartphones',
-                'created_at' => now()
-            ],
-            [
-                'id'    => 4,
-                'name'  => 'Speakers',
-                'slug'  => 'speakers',
-                'created_at' => now()
-            ],
-            [
-                'id'    => 5,
-                'name'  => 'Software',
-                'slug'  => 'software',
+                'name'  => 'Frozen Meat',
+                'slug'  => 'frozen-meat',
                 'created_at' => now()
             ]
         ]);
 
-        $categories->each(function ($category){
+        $categories->each(function ($category) {
             Category::insert($category);
         });
     }

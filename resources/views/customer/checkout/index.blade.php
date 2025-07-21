@@ -21,32 +21,32 @@
             --secondary-color: #4A0404;
             --accent-color: #FF4136;
         }
-        
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background-color: #f8f9fa;
         }
-        
+
         .navbar-brand {
             font-weight: bold;
             color: var(--primary-color) !important;
         }
-        
+
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-primary:hover {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
         }
-        
+
         .card {
             border: none;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         }
-        
+
         .card-header {
             background-color: var(--primary-color);
             color: white;
@@ -76,7 +76,7 @@
                 <i class="fas fa-drumstick-bite me-2"></i>
                 Yannis Meatshop - Customer Portal
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="{{ route('customer.products') }}">
                     <i class="fas fa-store me-1"></i>Products
@@ -141,105 +141,82 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('customer.checkout.place-order') }}" method="POST">
+                        <form action="{{ route('customer.checkout.place-order') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            
-                            <!-- Customer Information -->
+
+                            <!-- Customer Info -->
                             <div class="row mb-4">
                                 <div class="col-12">
-                                    <h6 class="mb-3">
-                                        <i class="fas fa-user me-2"></i>Customer Information
-                                    </h6>
+                                    <h6 class="mb-3"><i class="fas fa-user me-2"></i>Customer Information</h6>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="name" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="name" value="{{ $customer->name ?? '' }}" readonly>
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" value="{{ $customer->name ?? '' }}" readonly>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" value="{{ $customer->email }}" readonly>
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" value="{{ $customer->email }}" readonly>
                                 </div>
                             </div>
 
-                            <!-- Delivery Information -->
+                            <!-- Delivery Info -->
                             <div class="row mb-4">
                                 <div class="col-12">
-                                    <h6 class="mb-3">
-                                        <i class="fas fa-truck me-2"></i>Delivery Information
-                                    </h6>
+                                    <h6 class="mb-3"><i class="fas fa-truck me-2"></i>Delivery Information</h6>
                                 </div>
                                 <div class="col-12 mb-3">
-                                    <label for="delivery_address" class="form-label">Delivery Address *</label>
-                                    <textarea class="form-control @error('delivery_address') is-invalid @enderror" 
-                                              id="delivery_address" name="delivery_address" rows="3" 
-                                              placeholder="Enter your complete delivery address">{{ old('delivery_address', $customer->address) }}</textarea>
-                                    @error('delivery_address')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <label class="form-label">Delivery Address *</label>
+                                    <textarea class="form-control @error('delivery_address') is-invalid @enderror" name="delivery_address" rows="3" placeholder="Enter your complete delivery address">{{ old('delivery_address', $customer->address) }}</textarea>
+                                    @error('delivery_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="contact_phone" class="form-label">Contact Phone *</label>
-                                    <input type="text" class="form-control @error('contact_phone') is-invalid @enderror" 
-                                           id="contact_phone" name="contact_phone" 
-                                           value="{{ old('contact_phone', $customer->phone) }}" 
-                                           placeholder="Enter your contact number">
-                                    @error('contact_phone')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <label class="form-label">Contact Phone *</label>
+                                    <input type="text" class="form-control @error('contact_phone') is-invalid @enderror" name="contact_phone" value="{{ old('contact_phone', $customer->phone) }}" placeholder="Enter your contact number">
+                                    @error('contact_phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                             </div>
 
-                            <!-- Payment Information -->
+                            <!-- Payment Method -->
                             <div class="row mb-4">
                                 <div class="col-12">
-                                    <h6 class="mb-3">
-                                        <i class="fas fa-credit-card me-2"></i>Payment Method
-                                    </h6>
+                                    <h6 class="mb-3"><i class="fas fa-credit-card me-2"></i>Payment Method</h6>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="radio" name="payment_type" id="cash" value="cash" checked>
-                                        <label class="form-check-label" for="cash">
-                                            <i class="fas fa-money-bill me-2"></i>Cash on Delivery
-                                        </label>
+                                        <label class="form-check-label" for="cash"><i class="fas fa-money-bill me-2"></i>Cash on Delivery</label>
                                     </div>
+
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="radio" name="payment_type" id="gcash" value="gcash">
-                                        <label class="form-check-label" for="gcash">
-                                            <i class="fas fa-mobile-alt me-2"></i>GCash
-                                        </label>
+                                        <label class="form-check-label" for="gcash"><i class="fas fa-mobile-alt me-2"></i>GCash</label>
                                     </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="radio" name="payment_type" id="bank_transfer" value="bank_transfer">
-                                        <label class="form-check-label" for="bank_transfer">
-                                            <i class="fas fa-university me-2"></i>Bank Transfer
-                                        </label>
+
+                                    <!-- GCash Upload Section -->
+                                    <div id="gcash-upload-section" class="mt-3 d-none">
+                                        <label class="form-label">GCash Reference Number *</label>
+                                        <input type="text" class="form-control mb-2" name="gcash_reference" placeholder="Enter GCash Reference Number">
+                                        
+                                        <label class="form-label">Upload GCash Receipt *</label>
+                                        <input type="file" class="form-control" name="gcash_receipt" accept="image/*">
                                     </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="radio" name="payment_type" id="card" value="card">
-                                        <label class="form-check-label" for="card">
-                                            <i class="fas fa-credit-card me-2"></i>Credit/Debit Card
-                                        </label>
-                                    </div>
+
                                     @error('payment_type')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <!-- Additional Notes -->
+                            <!-- Notes -->
                             <div class="row mb-4">
                                 <div class="col-12">
-                                    <label for="delivery_notes" class="form-label">Delivery Notes (Optional)</label>
-                                    <textarea class="form-control @error('delivery_notes') is-invalid @enderror" 
-                                              id="delivery_notes" name="delivery_notes" rows="3" 
-                                              placeholder="Any special instructions for delivery">{{ old('delivery_notes') }}</textarea>
-                                    @error('delivery_notes')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <label class="form-label">Delivery Notes (Optional)</label>
+                                    <textarea class="form-control @error('delivery_notes') is-invalid @enderror" name="delivery_notes" rows="3" placeholder="Any special instructions for delivery">{{ old('delivery_notes') }}</textarea>
+                                    @error('delivery_notes')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                             </div>
 
+                            <!-- Actions -->
                             <div class="d-flex justify-content-between">
                                 <a href="{{ route('customer.cart') }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-arrow-left me-1"></i>Back to Cart
@@ -253,7 +230,7 @@
                 </div>
             </div>
 
-            <!-- Order Summary -->
+            <!-- Summary -->
             <div class="col-lg-4">
                 <div class="card summary-card">
                     <div class="card-header">
@@ -267,46 +244,27 @@
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h6 class="mb-1">{{ $item->name ?? 'Product' }}</h6>
-                                        <small class="text-muted">
-                                            {{ $item->qty }} x ₱{{ number_format($item->price, 2) }}
-                                        </small>
+                                        <small class="text-muted">{{ $item->qty }} x ₱{{ number_format($item->price, 2) }}</small>
                                     </div>
-                                    <div class="text-end">
-                                        <strong>₱{{ number_format($item->subtotal, 2) }}</strong>
-                                    </div>
+                                    <div class="text-end"><strong>₱{{ number_format($item->subtotal, 2) }}</strong></div>
                                 </div>
                             </div>
                         @endforeach
 
                         <hr>
-
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal:</span>
-                            <span>₱{{ number_format($cartSubtotal, 2) }}</span>
+                            <span>Subtotal:</span><span>₱{{ number_format($cartSubtotal, 2) }}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Tax (12%):</span>
-                            <span>₱{{ number_format($cartTax, 2) }}</span>
+                            <span>Tax (12%):</span><span>₱{{ number_format($cartTax, 2) }}</span>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between mb-3">
-                            <strong>Total:</strong>
-                            <strong class="text-primary">₱{{ number_format($cartTotal, 2) }}</strong>
+                            <strong>Total:</strong><strong class="text-primary">₱{{ number_format($cartTotal, 2) }}</strong>
                         </div>
 
-                        <div class="alert alert-info">
-                            <small>
-                                <i class="fas fa-info-circle me-1"></i>
-                                <strong>Estimated Delivery:</strong> 3-5 business days
-                            </small>
-                        </div>
-
-                        <div class="alert alert-warning">
-                            <small>
-                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                <strong>Note:</strong> Orders are processed during business hours (8 AM - 6 PM)
-                            </small>
-                        </div>
+                        <div class="alert alert-info"><small><i class="fas fa-info-circle me-1"></i><strong>Estimated Delivery:</strong> 3-5 business days</small></div>
+                        <div class="alert alert-warning"><small><i class="fas fa-exclamation-triangle me-1"></i><strong>Note:</strong> Orders are processed during business hours (8 AM - 6 PM)</small></div>
                     </div>
                 </div>
             </div>
@@ -316,5 +274,27 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const gcashRadio = document.getElementById("gcash");
+            const cashRadio = document.getElementById("cash");
+            const gcashSection = document.getElementById("gcash-upload-section");
+
+            function toggleGCashSection() {
+                if (gcashRadio.checked) {
+                    gcashSection.classList.remove("d-none");
+                } else {
+                    gcashSection.classList.add("d-none");
+                }
+            }
+
+            toggleGCashSection();
+
+            document.querySelectorAll("input[name='payment_type']").forEach(input => {
+                input.addEventListener("change", toggleGCashSection);
+            });
+        });
+    </script>
 </body>
-</html> 
+</html>

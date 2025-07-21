@@ -79,6 +79,7 @@ Route::prefix('customer')->name('customer.')->middleware('guest:web_customer')->
 Route::prefix('customer')->name('customer.')->middleware(['auth:web_customer'])->group(function () {
     Route::get('email/verify', [App\Http\Controllers\Customer\CustomerVerificationController::class, 'show'])->name('verification.notice');
     Route::get('email/verify/{id}/{hash}', [App\Http\Controllers\Customer\CustomerVerificationController::class, 'verify'])->name('verification.verify');
+   
     Route::post('email/resend', [App\Http\Controllers\Customer\CustomerVerificationController::class, 'resend'])->name('verification.resend');
 });
 
@@ -90,8 +91,10 @@ Route::middleware(['customer.web.auth'])->group(function () {
     })->name('customer.dashboard');
     Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('customer.orders');
     Route::get('/my-profile', [CustomerController::class, 'profile'])->name('customer.profile');
+    Route::put('/customer/profile/update', [CustomerController::class, 'update'])->name('customer.update');
     Route::post('/customer/logout', [App\Http\Controllers\Customer\WebAuthController::class, 'logout'])->name('customer.logout');
-    
+  
+
     // Customer Shopping Cart
     Route::get('/cart', [App\Http\Controllers\Customer\CartController::class, 'index'])->name('customer.cart');
     Route::post('/cart/add', [App\Http\Controllers\Customer\CartController::class, 'add'])->name('customer.cart.add');

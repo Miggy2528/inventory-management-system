@@ -62,6 +62,7 @@ class OrderController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             'payment_type' => 'required|in:cash,gcash,bank_transfer,card',
             'delivery_notes' => 'nullable|string|max:500',
+            
         ]);
 
         $customer = $request->user();

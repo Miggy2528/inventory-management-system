@@ -143,6 +143,7 @@
                             <label for="category" class="form-label">Category</label>
                             <select class="form-select" id="category" name="category">
                                 <option value="">All Categories</option>
+
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id }}" {{ $cat->id == $category->id ? 'selected' : '' }}>
                                         {{ $cat->name ?? 'Uncategorized' }}

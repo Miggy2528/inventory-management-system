@@ -8,7 +8,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Inventory Report</h3>
                     <div class="card-tools">
-                        <a href="{{ route('reports.export.inventory') }}" class="btn btn-success">
+                        <a href="{{ route('reports.export-inventory') }}" class="btn btn-success">
                             <i class="fas fa-file-export"></i> Export to CSV
                         </a>
                     </div>

@@ -35,10 +35,14 @@ class StoreProductRequest extends FormRequest
             'total_weight'      => 'required|numeric|min:0',
             'storage_location'  => 'required|string',
             'expiration_date'   => 'required|date|after:today',
-            'processing_date'   => 'required|date|before_or_equal:today',
-            'source'            => 'required|string',
+          'processing_date'   => 'required|date|before_or_equal:today',
+          'source'            => 'required|string',
             'grade'             => 'required|string',
-            'notes'             => 'nullable|string|max:1000'
+            'notes'             => 'nullable|string|max:1000',
+            'buying_price'      => 'required|numeric|min:0',
+            'selling_price'     => 'required|numeric|min:0',
+            'quantity_alert' => 'required|integer|min:0',
+           
         ];
     }
 

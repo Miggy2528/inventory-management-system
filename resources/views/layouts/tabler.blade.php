@@ -14,6 +14,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
@@ -37,5 +38,13 @@
     @livewireScripts
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- <x-livewire-alert::scripts /> --}}
+
+    <!-- Tabler CSS -->
+    <link href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet"/>
+</head>
+<body class="theme-dark">
+    <div class="page">
+        @yield('content')
+    </div>
 </body>
 </html> 

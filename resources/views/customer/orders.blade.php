@@ -195,7 +195,7 @@
                                                         }
                                                     @endphp
                                                     <span class="badge status-badge {{ $statusClass }}">
-                                                        {{ ucfirst($order->order_status) }}
+                                                    {{ ucfirst($order->order_status->value) }}
                                                     </span>
                                                 </td>
                                                 <td>

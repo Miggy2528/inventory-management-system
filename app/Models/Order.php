@@ -36,6 +36,8 @@ class Order extends Model
         'delivery_notes',
         'delivery_address',
         'contact_phone',
+        'gcash_reference',        
+        'proof_of_payment',  
     ];
 
     protected $casts = [

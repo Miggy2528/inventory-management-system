@@ -13,10 +13,15 @@ class ProfileController extends Controller
 {
     public function edit(Request $request)
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $customer = Auth::guard('web_customer')->user(); // match the guard used in middleware
+    
+        if (!$customer) {
+            return redirect()->route('customer.login')->with('error', 'Please login to continue.');
+        }
+    
+        return view('customer.profile', compact('customer'));
     }
+/** */
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {

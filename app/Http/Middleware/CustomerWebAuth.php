@@ -30,6 +30,7 @@ class CustomerWebAuth
                 ->with('error', 'Please login to continue.');
         }
 
+        Auth::shouldUse('web_customer');
         $user = Auth::guard('web_customer')->user();
 
         // Check if the authenticated user is a customer

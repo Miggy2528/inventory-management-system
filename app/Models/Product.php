@@ -27,7 +27,9 @@ class Product extends Model
         'source',
         'grade',
         'processing_date',
-        'notes'
+        'notes',
+        'buying_price',
+        'quantity_alert'
     ];
 
     public $sortable = [
@@ -59,6 +61,18 @@ class Product extends Model
             });
     }
 
+    protected static function booted()
+    {
+        static::created(function ($product) {
+            if ($product->quantity > 0) {
+                \App\Models\InventoryMovement::create([
+                    'product_id' => $product->id,
+                    'type' => 'in',
+                    'quantity' => $product->quantity,
+                ]);
+            }
+        });
+    }
     // Note: meatCut relationship removed as products table doesn't have meat_cut_id field
     // Use separate meat_cuts table for meat-specific products
 
@@ -78,12 +92,20 @@ class Product extends Model
     }
 
     public function getCurrentStockAttribute()
-    {
-        return $this->inventoryMovements()
-            ->where('type', 'in')
-            ->sum('quantity') - 
-            $this->inventoryMovements()
-            ->where('type', 'out')
-            ->sum('quantity');
-    }
+{
+    $movements = $this->relationLoaded('inventoryMovements')
+        ? $this->inventoryMovements
+        : $this->inventoryMovements()->get();
+
+    $in = $movements->where('type', 'in')->sum('quantity');
+    $out = $movements->where('type', 'out')->sum('quantity');
+
+    return $in - $out;
+}
+
+    public function meatCut()
+{
+    return $this->belongsTo(MeatCut::class);
+}
+
 } 

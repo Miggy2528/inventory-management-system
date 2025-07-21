@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -27,8 +28,7 @@ class OrderController extends Controller
 
     public function create()
     {
-        Cart::instance('order')
-            ->destroy();
+        Cart::instance('order')->destroy();
 
         return view('orders.create', [
             'carts' => Cart::content(),
@@ -39,34 +39,61 @@ class OrderController extends Controller
 
     public function store(OrderStoreRequest $request)
     {
-        $order = Order::create($request->all());
+        DB::beginTransaction();
 
-        // Create Order Details
-        $contents = Cart::instance('order')->content();
-        $oDetails = [];
+        try {
+            // Handle proof of payment upload if exists
+            $proofOfPaymentPath = null;
+            if ($request->hasFile('gcash_receipt')) {
+                $proofOfPaymentPath = $request->file('gcash_receipt')->store('proofs', 'public');
+            }
 
-        foreach ($contents as $content) {
-            $oDetails['order_id'] = $order['id'];
-            $oDetails['product_id'] = $content->id;
-            $oDetails['quantity'] = $content->qty;
-            $oDetails['unitcost'] = $content->price;
-            $oDetails['total'] = $content->subtotal;
-            $oDetails['created_at'] = Carbon::now();
+            // Create the order
+            $order = Order::create([
+                'customer_id' => Auth::guard('web_customer')->id(),
+                'gcash_reference' => $request->gcash_reference,
+                'proof_of_payment' => $proofOfPaymentPath,
+                'order_status' => OrderStatus::PENDING,
+                'total_price' => Cart::instance('order')->subtotal(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Create order details
+            $contents = Cart::instance('order')->content();
+            $oDetails = [];
+
+            foreach ($contents as $content) {
+                $oDetails[] = [
+                    'order_id' => $order->id,
+                    'product_id' => $content->id,
+                    'quantity' => $content->qty,
+                    'unitcost' => $content->price,
+                    'total' => $content->subtotal,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
 
             OrderDetails::insert($oDetails);
+
+            // Clear cart
+            Cart::destroy();
+
+            DB::commit();
+
+            return redirect()
+                ->route('orders.index')
+                ->with('success', 'Order has been created!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to place order: ' . $e->getMessage());
         }
-
-        // Delete Cart Sopping History
-        Cart::destroy();
-
-        return redirect()
-            ->route('orders.index')
-            ->with('success', 'Order has been created!');
     }
 
     public function show(Order $order)
     {
-        $order->loadMissing(['customer', 'details'])->get();
+        $order->loadMissing(['customer', 'details']);
 
         return view('orders.show', [
             'order' => $order,
@@ -75,14 +102,11 @@ class OrderController extends Controller
 
     public function update(Order $order, Request $request)
     {
-        // TODO refactoring
-
-        // Reduce the stock
-        $products = OrderDetails::where('order_id', $order)->get();
+        $products = OrderDetails::where('order_id', $order->id)->get();
 
         foreach ($products as $product) {
             Product::where('id', $product->product_id)
-                ->update(['quantity' => DB::raw('quantity-' . $product->quantity)]);
+                ->update(['quantity' => DB::raw('quantity - ' . $product->quantity)]);
         }
 
         $order->update([
@@ -115,12 +139,17 @@ class OrderController extends Controller
      */
     public function myOrders()
     {
-        $customer = auth()->user();
+        $customer = Auth::guard('web_customer')->user();
+
+        if (!$customer) {
+            return redirect()->route('customer.login')->with('error', 'You must be logged in to view your orders.');
+        }
+
         $orders = Order::where('customer_id', $customer->id)
-                      ->with(['details.product'])
-                      ->latest()
-                      ->get();
-        
+            ->with(['details.product'])
+            ->latest()
+            ->get();
+
         return view('customer.orders', [
             'orders' => $orders,
             'customer' => $customer

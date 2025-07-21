@@ -127,9 +127,9 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('customers.update', $customer->id) }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
+                    <form action="{{ route('customer.update') }}" method="POST" enctype="multipart/form-data">
+                           @csrf
+                            @method('PUT')   
                             
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -178,35 +178,6 @@
                                 @error('address')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="account_holder" class="form-label">Account Holder Name</label>
-                                    <input type="text" class="form-control @error('account_holder') is-invalid @enderror" 
-                                           id="account_holder" name="account_holder" value="{{ old('account_holder', $customer->account_holder) }}">
-                                    @error('account_holder')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                
-                                <div class="col-md-4 mb-3">
-                                    <label for="account_number" class="form-label">Account Number</label>
-                                    <input type="text" class="form-control @error('account_number') is-invalid @enderror" 
-                                           id="account_number" name="account_number" value="{{ old('account_number', $customer->account_number) }}">
-                                    @error('account_number')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                
-                                <div class="col-md-4 mb-3">
-                                    <label for="bank_name" class="form-label">Bank Name</label>
-                                    <input type="text" class="form-control @error('bank_name') is-invalid @enderror" 
-                                           id="bank_name" name="bank_name" value="{{ old('bank_name', $customer->bank_name) }}">
-                                    @error('bank_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
                             </div>
 
                             <div class="mb-3">
