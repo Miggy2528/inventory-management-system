@@ -46,7 +46,7 @@ class Order extends Model
         'estimated_delivery' => 'datetime',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
-        'order_status'  => OrderStatus::class
+        'order_status'  => OrderStatus::class,
     ];
 
     /**

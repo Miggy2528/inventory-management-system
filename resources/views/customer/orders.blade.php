@@ -195,15 +195,28 @@
                                                         }
                                                     @endphp
                                                     <span class="badge status-badge {{ $statusClass }}">
-                                                    {{ ucfirst($order->order_status->value) }}
+                                                        {{ ucfirst($order->order_status->value ?? $order->order_status) }}
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <a href="{{ route('orders.show', $order->id) }}" 
-                                                       class="btn btn-sm btn-outline-primary">
+                                                       class="btn btn-sm btn-outline-primary mb-1">
                                                         <i class="fas fa-eye me-1"></i>View
                                                     </a>
-                                                </td>
+
+                                                    
+                                                         @if($order->order_status === \App\Enums\OrderStatus::PENDING)
+                                                         <form action="{{ route('orders.update-status', $order->id) }}" method="POST" class="d-inline"
+                                                       onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                                          @csrf
+                                                           @method('PATCH')
+                                                         <input type="hidden" name="order_status" value="cancelled">
+                                                             <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                             <i class="fas fa-times-circle me-1"></i>Cancel
+                                                         </button>
+                                                    </form>
+                                                @endif
+                                              </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -229,4 +242,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
-</html> 
+</html>

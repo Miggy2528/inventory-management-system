@@ -58,7 +58,7 @@ class OrderController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
+            
             // Create order details
             $contents = Cart::instance('order')->content();
             $oDetails = [];
@@ -155,4 +155,17 @@ class OrderController extends Controller
             'customer' => $customer
         ]);
     }
+
+//  Update Status
+public function updateStatus(Request $request, Order $order)
+{
+    $request->validate([
+        'order_status' => 'required|in:pending,complete,cancelled',
+    ]);
+
+    $order->order_status = OrderStatus::from($request->order_status);
+    $order->save();
+
+    return back()->with('success', 'Order status updated successfully.');
+}
 }

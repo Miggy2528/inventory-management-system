@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-enum OrderStatus: int
+enum OrderStatus: string
 {
-    case PENDING = 0;
-    case COMPLETE = 1;
-    case CANCELLED = 2;
+    case PENDING = 'pending';
+    case COMPLETE = 'complete';
+    case CANCELLED = 'cancelled';
 
     public function label(): string
     {
