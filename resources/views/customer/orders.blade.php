@@ -183,19 +183,19 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <strong>${{ number_format($order->details->sum('total'), 2) }}</strong>
+                                                    <strong>₱{{ number_format($order->details->sum('total'), 2) }}</strong>
                                                 </td>
                                                 <td>
                                                     @php
                                                         $statusClass = 'status-pending';
-                                                        if($order->order_status === 'complete') {
+                                                        if($order->order_status === \App\Enums\OrderStatus::COMPLETE) {
                                                             $statusClass = 'status-complete';
-                                                        } elseif($order->order_status === 'cancelled') {
+                                                        } elseif($order->order_status === \App\Enums\OrderStatus::CANCELLED) {
                                                             $statusClass = 'status-cancelled';
                                                         }
                                                     @endphp
                                                     <span class="badge status-badge {{ $statusClass }}">
-                                                        {{ ucfirst($order->order_status->value ?? $order->order_status) }}
+                                                        {{ $order->order_status instanceof \App\Enums\OrderStatus ? $order->order_status->label() : ucfirst($order->order_status) }}
                                                     </span>
                                                 </td>
                                                 <td>

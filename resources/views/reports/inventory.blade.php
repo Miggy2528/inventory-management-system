@@ -67,6 +67,7 @@
                                     <th>Unit Price</th>
                                     <th>Total Value</th>
                                     <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,17 +81,26 @@
                                     <td>₱{{ number_format($product->current_stock * $product->price_per_kg, 2) }}</td>
                                     <td>
                                         @if($product->current_stock <= $product->minimum_stock_level)
-                                            <span class="badge badge-danger">Low Stock</span>
+                                            <span class="badge badge-danger  text-dark">Low Stock</span>
                                         @elseif($product->current_stock == 0)
                                             <span class="badge badge-dark">Out of Stock</span>
                                         @else
-                                            <span class="badge badge-success">In Stock</span>
+                                            <span class="badge badge-success  text-dark">In Stock</span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product? This action cannot be undone.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Remove
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="7" class="text-center">No products found.</td>
+                                    <td colspan="8" class="text-center">No products found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

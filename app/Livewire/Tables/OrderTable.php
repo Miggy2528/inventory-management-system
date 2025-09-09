@@ -36,6 +36,7 @@ class OrderTable extends Component
             'orders' => Order::query()
                 ->with(['customer', 'details'])
                 ->search($this->search)
+                ->orderByRaw("CASE order_status WHEN 'pending' THEN 1 WHEN 'complete' THEN 2 WHEN 'cancelled' THEN 3 ELSE 4 END")
                 ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                 ->paginate($this->perPage),
         ]);

@@ -1,9 +1,19 @@
 @extends('layouts.auth')
 
+@push('page-styles')
+<style>
+    /* Widen the auth card for the two-column registration page */
+    .auth-card { max-width: 1200px; }
+    @media (max-width: 991.98px) { /* Bootstrap lg breakpoint */
+        .auth-card { max-width: 100%; }
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="row justify-content-center">
+<div class="row justify-content-center g-4">
     <!-- Admin/Staff Registration -->
-    <div class="col-md-6">
+    <div class="col-12 col-lg-6">
         <form class="card card-md" action="{{ route('register') }}" method="POST" autocomplete="off">
             @csrf
 
@@ -48,7 +58,7 @@
     </div>
 
     <!-- Customer Registration -->
-    <div class="col-md-6">
+    <div class="col-12 col-lg-6">
         <form class="card card-md border-primary" action="{{ route('customer.register') }}" method="POST" autocomplete="off">
             @csrf
 
