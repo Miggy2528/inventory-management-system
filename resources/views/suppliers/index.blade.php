@@ -39,7 +39,8 @@
                                 <tr>
                                     <td>{{ $supplier->name }}</td>
                                     <td>{{ $supplier->shopname }}</td>
-                                    <td>{{ ucfirst($supplier->type) }}</td>
+                                    <td>{{ ucfirst($supplier->type->value ?? '') }}</td>
+
                                     <td>
                                         <strong>Email:</strong> {{ $supplier->email }}<br>
                                         <strong>Phone:</strong> {{ $supplier->phone }}

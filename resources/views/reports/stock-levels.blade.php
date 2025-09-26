@@ -36,9 +36,12 @@
                                 <th>Product Name</th>
                                 <th>Meat Cut</th>
                                 <th>Current Stock</th>
+                                <th>Unit</th>
+                                <th>Storage Location</th>
                                 <th>Unit Price</th>
                                 <th>Stock Value</th>
                                 <th>Status</th>
+                               
                             </tr>
                         </thead>
                         <tbody>
@@ -47,6 +50,8 @@
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->meatCut->name ?? 'N/A' }}</td>
                                 <td>{{ $product->current_stock }}</td>
+                                <td>{{ $product->unit->name ?? 'N/A' }}</td>
+                                <td>{{ $product->storage_location ?? 'N/A' }}</td>
                                 <td>₱{{ number_format($product->price_per_kg, 2) }}</td>
                                 <td>₱{{ number_format($product->current_stock * $product->price_per_kg, 2) }}</td>
                                 <td>
@@ -63,7 +68,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4" class="text-end"><strong>Category Total:</strong></td>
+                                <td colspan="6" class="text-end"><strong>Category Total:</strong></td>
                                 <td colspan="2">
                                     <strong>₱{{ number_format($products->sum(function($product) {
                                         return $product->current_stock * $product->price_per_kg;

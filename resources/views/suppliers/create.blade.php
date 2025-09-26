@@ -62,9 +62,9 @@
                                 <label for="type" class="form-label">Type</label>
                                 <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
                                     <option value="">Select Type</option>
-                                    <option value="wholesale" {{ old('type') == 'wholesale' ? 'selected' : '' }}>Wholesale</option>
-                                    <option value="retail" {{ old('type') == 'retail' ? 'selected' : '' }}>Retail</option>
-                                    <option value="manufacturer" {{ old('type') == 'manufacturer' ? 'selected' : '' }}>Manufacturer</option>
+                                    <option value="distributor" {{ old('type') == 'distributor' ? 'selected' : '' }}>Distributor</option>
+                                    <option value="wholesaler" {{ old('type') == 'wholesaler' ? 'selected' : '' }}>Wholesaler</option>
+                                    <option value="producer" {{ old('type') == 'producer' ? 'selected' : '' }}>Producer</option>
                                 </select>
                                 @error('type')
                                     <div class="invalid-feedback">{{ $message }}</div>

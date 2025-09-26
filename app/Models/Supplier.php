@@ -34,9 +34,9 @@ class Supplier extends Model
         'type' => SupplierType::class
     ];
 
-    public function purchases(): HasMany
+    public function products(): HasMany
     {
-        return $this->hasMany(Purchase::class);
+        return $this->hasMany(Product::class);
     }
 
     public function scopeSearch($query, $value): void
@@ -47,4 +47,10 @@ class Supplier extends Model
             ->orWhere('shopname', 'like', "%{$value}%")
             ->orWhere('type', 'like', "%{$value}%");
     }
+
+    public function getTypeNameAttribute(): string
+{
+    return $this->type->value ?? '';
+}
+
 }

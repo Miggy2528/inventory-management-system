@@ -63,6 +63,8 @@
                                     <th>Product Name</th>
                                     <th>Category</th>
                                     <th>Meat Cut</th>
+                                    <th>Processing Date</th>
+                                    <th>Expiration Date</th>
                                     <th>Current Stock</th>
                                     <th>Unit Price</th>
                                     <th>Total Value</th>
@@ -76,6 +78,28 @@
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->category->name }}</td>
                                     <td>{{ $product->meatCut->name }}</td>
+                                    <td>
+                                        @if($product->processing_date)
+                                            {{ $product->processing_date->format('Y-m-d') }}
+                                        @else
+                                            <span class="text-muted">N/A</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($product->expiration_date)
+                                            {{ $product->expiration_date->format('Y-m-d') }}
+                                            @php
+                                                $daysToExpire = now()->diffInDays($product->expiration_date, false);
+                                            @endphp
+                                            @if($daysToExpire < 0)
+                                                <span class="badge badge-danger ml-2 text-dark">Expired {{ abs($daysToExpire) }}d</span>
+                                            @elseif($daysToExpire <= 7)
+                                                <span class="badge badge-warning ml-2 text-dark">Expiring in {{ $daysToExpire }}d</span>
+                                            @endif
+                                        @else
+                                            <span class="text-muted">N/A</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $product->current_stock }}</td>
                                     <td>₱{{ number_format($product->price_per_kg, 2) }}</td>
                                     <td>₱{{ number_format($product->current_stock * $product->price_per_kg, 2) }}</td>
@@ -105,7 +129,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-center">No products found.</td>
+                                    <td colspan="10" class="text-center">No products found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

@@ -107,6 +107,8 @@
                             <i class="fas fa-truck me-1"></i> Suppliers
                         </a>
                     </li>
+
+
                     @if(Auth::user()->isAdmin())
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('reports.index') }}">

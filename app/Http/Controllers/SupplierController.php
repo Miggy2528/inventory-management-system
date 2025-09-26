@@ -7,6 +7,10 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Http\Requests\Supplier\StoreSupplierRequest;
+use App\Http\Requests\Supplier\UpdateSupplierRequest;
+use App\Enums\SupplierType;
+use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
 {
@@ -26,19 +30,9 @@ class SupplierController extends Controller
         return view('suppliers.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreSupplierRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:suppliers',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string',
-            'shopname' => 'required|string|max:255',
-            'type' => 'required|string|in:wholesale,retail,both',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'status' => 'required|in:active,inactive',
-            'notes' => 'nullable|string'
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
@@ -64,19 +58,9 @@ class SupplierController extends Controller
         return view('suppliers.edit', compact('supplier'));
     }
 
-    public function update(Request $request, Supplier $supplier)
+    public function update(UpdateSupplierRequest $request, Supplier $supplier)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:suppliers,email,' . $supplier->id,
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string',
-            'shopname' => 'required|string|max:255',
-            'type' => 'required|string|in:wholesale,retail,both',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'status' => 'required|in:active,inactive',
-            'notes' => 'nullable|string'
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('photo')) {
             // Delete old photo if exists

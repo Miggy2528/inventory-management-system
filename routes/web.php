@@ -167,6 +167,9 @@ Route::middleware(['auth:web'])->group(function () {
         
         // Supplier Management
         Route::resource('/suppliers', SupplierController::class);
+        Route::post('/suppliers/{supplier}/assign-products', [SupplierController::class, 'assignProducts'])
+         ->name('suppliers.assign-products');
+        
     });
 
     // Shared Routes (All Authenticated Users)
@@ -186,7 +189,7 @@ Route::middleware(['auth:web'])->group(function () {
     // SHOW ORDER
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::put('/orders/update/{order}', [OrderController::class, 'update'])->name('orders.update');
-
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     //  Order Status Update
 Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
 

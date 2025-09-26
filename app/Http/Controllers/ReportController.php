@@ -115,7 +115,7 @@ class ReportController extends Controller
 
     public function stockLevels()
     {
-        $stockLevels = Product::with(['category', 'meatCut'])
+        $stockLevels = Product::with(['category', 'meatCut', 'unit', 'inventoryMovements'])
             ->get()
             ->groupBy('category.name');
 
@@ -133,13 +133,17 @@ class ReportController extends Controller
 
     public function exportInventory()
     {
-        $products = Product::with(['category', 'meatCut'])
+        $products = Product::with(['category', 'meatCut', 'unit', 'inventoryMovements'])
             ->get()
             ->map(function ($product) {
                 return [
                     'Product Name' => $product->name,
                     'Category' => $product->category->name ?? 'N/A',
                     'Meat Cut' => $product->meatCut->name ?? 'N/A',
+                    'Unit' => $product->unit->name ?? 'N/A',
+                    'Storage Location' => $product->storage_location ?? 'N/A',
+                    'Processing Date' => $product->processing_date ? $product->processing_date->format('Y-m-d') : 'N/A',
+                    'Expiration Date' => $product->expiration_date ? $product->expiration_date->format('Y-m-d') : 'N/A',
                     'Current Stock' => $product->current_stock,
                     'Unit Price' => number_format($product->price_per_kg, 2),
                     'Stock Value' => number_format($product->current_stock * $product->price_per_kg, 2),

@@ -27,7 +27,9 @@
                         <div class="col-md-8">
                             <h4>{{ $supplier->name }}</h4>
                             <p class="text-muted">{{ $supplier->shopname }}</p>
-                            <p><strong>Type:</strong> {{ ucfirst($supplier->type) }}</p>
+                            <p><strong>Type:</strong> {{ ucfirst($supplier->type_name) }}</p>
+
+
                             <p><strong>Status:</strong> 
                                 <span class="badge bg-{{ $supplier->status === 'active' ? 'success' : 'danger' }}">
                                     {{ ucfirst($supplier->status) }}

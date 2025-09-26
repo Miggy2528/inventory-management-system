@@ -83,6 +83,14 @@
                                     <td class="align-middle text-center" style="width: 5%">
                                         <x-button.show class="btn-icon" route="{{ route('orders.show', $order) }}"/>
                                         <x-button.print class="btn-icon" route="{{ route('order.downloadInvoice', $order) }}"/>
+                                        <form action="{{ route('orders.destroy', $order) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                        @csrf
+                                     @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger" title="Delete">
+                                       <i class="ti ti-trash"></i> Delete
+                                    </button>
+                                        </form>
+
                                     </td>
                                 </tr>
                             @endforeach
@@ -130,6 +138,13 @@
                                     <td class="align-middle text-center" style="width: 5%">
                                         <x-button.show class="btn-icon" route="{{ route('orders.show', $order) }}"/>
                                         <x-button.print class="btn-icon" route="{{ route('order.downloadInvoice', $order) }}"/>
+                                        <form action="{{ route('orders.destroy', $order) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-icon btn-outline-danger" title="Delete">
+                                                <i class="ti ti-trash"></i>Delete
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -177,6 +192,13 @@
                                     <td class="align-middle text-center" style="width: 5%">
                                         <x-button.show class="btn-icon" route="{{ route('orders.show', $order) }}"/>
                                         <x-button.print class="btn-icon" route="{{ route('order.downloadInvoice', $order) }}"/>
+                                        <form action="{{ route('orders.destroy', $order) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-icon btn-outline-danger" title="Delete">
+                                                <i class="ti ti-trash"></i>Delete
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
