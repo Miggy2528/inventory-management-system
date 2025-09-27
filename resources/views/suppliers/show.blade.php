@@ -31,7 +31,7 @@
 
 
                             <p><strong>Status:</strong> 
-                                <span class="badge bg-{{ $supplier->status === 'active' ? 'success' : 'danger' }}">
+                                <span class="badge bg-{{ $supplier->status === 'active' ? 'success' : 'danger' }} text-dark">
                                     {{ ucfirst($supplier->status) }}
                                 </span>
                             </p>

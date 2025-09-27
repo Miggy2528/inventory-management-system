@@ -58,20 +58,33 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="type" class="form-label">Type</label>
                                 <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
                                     <option value="">Select Type</option>
                                     <option value="distributor" {{ old('type') == 'distributor' ? 'selected' : '' }}>Distributor</option>
                                     <option value="wholesaler" {{ old('type') == 'wholesaler' ? 'selected' : '' }}>Wholesaler</option>
                                     <option value="producer" {{ old('type') == 'producer' ? 'selected' : '' }}>Producer</option>
+                                    <option value="retail" {{ old('type') == 'retail' ? 'selected' : '' }}>Retail</option>
                                 </select>
                                 @error('type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                                    <option value="">Select Status</option>
+                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                                @error('status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4">
                                 <label for="photo" class="form-label">Photo</label>
                                 <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo">
                                 @error('photo')

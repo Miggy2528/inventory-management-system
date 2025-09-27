@@ -59,20 +59,33 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="type" class="form-label">Type</label>
                                 <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
                                     <option value="">Select Type</option>
-                                    <option value="wholesale" {{ old('type', $supplier->type) == 'wholesale' ? 'selected' : '' }}>Wholesale</option>
+                                    <option value="distributor" {{ old('type', $supplier->type) == 'distributor' ? 'selected' : '' }}>Distributor</option>
+                                    <option value="wholesaler" {{ old('type', $supplier->type) == 'wholesaler' ? 'selected' : '' }}>Wholesaler</option>
+                                    <option value="producer" {{ old('type', $supplier->type) == 'producer' ? 'selected' : '' }}>Producer</option>
                                     <option value="retail" {{ old('type', $supplier->type) == 'retail' ? 'selected' : '' }}>Retail</option>
-                                    <option value="manufacturer" {{ old('type', $supplier->type) == 'manufacturer' ? 'selected' : '' }}>Manufacturer</option>
                                 </select>
                                 @error('type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                                    <option value="">Select Status</option>
+                                    <option value="active" {{ old('status', $supplier->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="inactive" {{ old('status', $supplier->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                                @error('status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4">
                                 <label for="photo" class="form-label">Photo</label>
                                 @if($supplier->photo)
                                     <div class="mb-2">

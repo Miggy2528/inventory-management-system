@@ -28,6 +28,7 @@ class StoreSupplierRequest extends FormRequest
             'phone' => 'required|string|max:25|unique:suppliers,phone',
             'shopname' => 'required|string|max:50',
             'type' => 'required|string|max:25',
+            'status' => 'required|in:active,inactive',
             'account_holder' => 'max:50',
             'account_number' => 'max:25',
             'bank_name' => 'max:25',

@@ -22,6 +22,7 @@ class Supplier extends Model
         'address',
         'shopname',
         'type',
+        'status',
         'photo',
         'account_holder',
         'account_number',
@@ -45,7 +46,8 @@ class Supplier extends Model
             ->orWhere('email', 'like', "%{$value}%")
             ->orWhere('phone', 'like', "%{$value}%")
             ->orWhere('shopname', 'like', "%{$value}%")
-            ->orWhere('type', 'like', "%{$value}%");
+            ->orWhere('type', 'like', "%{$value}%")
+            ->orWhere('status', 'like', "%{$value}%");
     }
 
     public function getTypeNameAttribute(): string

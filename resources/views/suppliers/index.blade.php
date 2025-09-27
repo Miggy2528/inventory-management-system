@@ -46,10 +46,11 @@
                                         <strong>Phone:</strong> {{ $supplier->phone }}
                                     </td>
                                     <td>
-                                        <span class="badge badge-{{ $supplier->status === 'active' ? 'success' : 'danger' }}">
-                                            {{ ucfirst($supplier->status) }}
+                                    <span class="badge badge-{{ $supplier->status === 'active' ? 'success' : 'danger' }} text-dark">
+                                    {{ ucfirst($supplier->status) }}
                                         </span>
                                     </td>
+
                                     <td>
                                         <div class="btn-group">
                                             @can('view', $supplier)

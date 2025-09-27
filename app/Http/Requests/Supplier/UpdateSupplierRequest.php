@@ -55,6 +55,10 @@ class UpdateSupplierRequest extends FormRequest
                 'string',
                 'max:25'
             ],
+            'status' => [
+                'required',
+                'in:active,inactive'
+            ],
             'account_holder' => [
                 'max:50'
             ],

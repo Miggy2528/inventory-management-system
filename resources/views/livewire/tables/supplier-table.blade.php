@@ -68,6 +68,12 @@
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('status')" href="#" role="button">
+                            {{ __('Status') }}
+                            @include('inclues._sort-icon', ['field' => 'status'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
                         {{ __('Action') }}
                     </th>
                 </tr>
@@ -92,6 +98,11 @@
                             {{ $supplier->type }}
                         </span>
                     </td>
+                    <td class="align-middle text-center">
+                        <span class="badge {{ $supplier->status == 'active' ? 'bg-success' : 'bg-danger' }} text-white text-uppercase">
+                            {{ $supplier->status }}
+                        </span>
+                    </td>
                     <td class="align-middle text-center" style="width: 10%">
                         <x-button.show class="btn-icon" route="{{ route('suppliers.show', $supplier) }}"/>
                         <x-button.edit class="btn-icon" route="{{ route('suppliers.edit', $supplier) }}"/>
@@ -100,7 +111,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td class="align-middle text-center" colspan="5">
+                    <td class="align-middle text-center" colspan="6">
                         No results found
                     </td>
                 </tr>
