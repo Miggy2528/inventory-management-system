@@ -16,7 +16,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = Product::with(['category', 'unit'])
-            ->where('quantity', '>', 0);
+            ->where('quantity', '>', 0)
+            ->whereNotNull('category_id'); // Only show products with proper categories (not auto-synced)
 
         // Search functionality
         if ($request->has('search') && $request->search) {
@@ -80,6 +81,7 @@ class ProductController extends Controller
         $products = Product::with(['category', 'unit'])
             ->where('category_id', $category->id)
             ->where('quantity', '>', 0)
+            ->whereNotNull('category_id')
             ->paginate(12);
 
         $categories = Category::all();

@@ -40,6 +40,15 @@ Route::get('php/', function () {
     return phpinfo();
 });
 
+Route::get('test-product-fields', function () {
+    $product = new App\Models\Product();
+    return [
+        'fillable' => $product->getFillable(),
+        'table' => $product->getTable(),
+        'connection' => $product->getConnectionName()
+    ];
+});
+
 Route::get('test-customer-login', function () {
     return 'Customer login route is working!';
 })->name('test.customer.login');
@@ -151,6 +160,11 @@ Route::middleware(['auth:web'])->group(function () {
         Route::resource('/categories', CategoryController::class);
         Route::resource('/units', UnitController::class);
         Route::resource('/meat-cuts', MeatCutController::class);
+        // Packaged Products
+        Route::prefix('admin')->group(function () {
+            Route::resource('/packaged-products', \App\Http\Controllers\PackagedProductController::class)
+                ->names('packaged-products');
+        });
         
         // Order Management
         Route::get('/orders/pending', OrderPendingController::class)->name('orders.pending');

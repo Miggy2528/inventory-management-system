@@ -54,7 +54,54 @@ class ProductController extends Controller
         }
 
         try {
-            $product = Product::create($request->all());
+            $isSoldByPackage = $request->boolean('is_sold_by_package');
+            
+            // Debug: Log all form data
+            \Log::info('=== PRODUCT CREATION DEBUG ===');
+            \Log::info('is_sold_by_package: ' . ($isSoldByPackage ? 'true' : 'false'));
+            \Log::info('price_per_package: ' . $request->get('price_per_package'));
+            \Log::info('price_per_kg: ' . $request->get('price_per_kg'));
+            \Log::info('All form data:', $request->all());
+            
+            $productData = [
+                'meat_cut_id' => $request->get('meat_cut_id'),
+                'name' => $request->get('name'),
+                'code' => $request->get('code'),
+                'category_id' => $request->get('category_id'),
+                'unit_id' => $isSoldByPackage
+                    ? \App\Models\Unit::where('name', 'like', '%package%')->value('id')
+                    : $request->get('unit_id'),
+                'quantity' => 0,
+                'is_sold_by_package' => $isSoldByPackage,
+                'total_weight' => $request->get('total_weight'),
+                'storage_location' => $request->get('storage_location'),
+                'expiration_date' => $request->get('expiration_date'),
+                'source' => $request->get('source'),
+                'notes' => $request->get('notes'),
+                'buying_price' => $request->get('buying_price'),
+                'quantity_alert' => $request->get('quantity_alert'),
+            ];
+
+            if ($isSoldByPackage) {
+                // Package-specific fields
+                $productData['price_per_package'] = $request->get('price_per_package') ?: 999.99; // Test value
+                $productData['selling_price'] = $request->get('price_per_package') ?: 999.99; // Test value
+            } else {
+                // KG-specific fields
+                $productData['unit_id'] = $request->get('unit_id');
+                $productData['price_per_kg'] = $request->get('price_per_kg') ?: 888.88; // Test value
+                $productData['selling_price'] = $request->get('price_per_kg') ?: 888.88; // Test value
+            }
+
+            $product = Product::create($productData);
+            
+            // Debug: Log what was actually saved
+            \Log::info('=== PRODUCT CREATED ===');
+            \Log::info('Product ID: ' . $product->id);
+            \Log::info('is_sold_by_package: ' . ($product->is_sold_by_package ? 'true' : 'false'));
+            \Log::info('price_per_package: ' . $product->price_per_package);
+            \Log::info('price_per_kg: ' . $product->price_per_kg);
+            \Log::info('selling_price: ' . $product->selling_price);
 
             /**
              * Handle image upload
@@ -76,7 +123,7 @@ class ProductController extends Controller
 
             return redirect()
                 ->back()
-                ->with('success', 'Product has been created with code: ' . $product->code);
+                ->with('success', 'Product created! Code: ' . $product->code . ' | Package: ' . ($product->is_sold_by_package ? 'YES' : 'NO') . ' | Selling Price: ' . $product->selling_price . ' | Price per Package: ' . $product->price_per_package . ' | Price per KG: ' . $product->price_per_kg);
 
         } catch (\Exception $e) {
             // Handle any unexpected errors

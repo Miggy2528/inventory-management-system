@@ -1,6 +1,17 @@
 <div class="row">
     <div class="col-md-6">
         <div class="form-group mb-3">
+            <div class="form-check form-switch">
+                <input type="checkbox" 
+                       class="form-check-input" 
+                       id="is_packaged" 
+                       name="is_packaged" 
+                       value="1" 
+                       {{ old('is_packaged', $meatCut->is_packaged ?? false) ? 'checked' : '' }}>
+                <label class="form-check-label" for="is_packaged">Sold by Package</label>
+            </div>
+        </div>
+        <div class="form-group mb-3">
             <label for="name" class="form-label">Name</label>
             <input type="text" 
                    name="name" 
@@ -17,8 +28,7 @@
             <label for="animal_type" class="form-label">Animal Type</label>
             <select name="animal_type" 
                     id="animal_type" 
-                    class="form-select @error('animal_type') is-invalid @enderror" 
-                    required>
+                    class="form-select @error('animal_type') is-invalid @enderror">
                 <option value="">Select Animal Type</option>
                 @foreach(['Beef', 'Pork', 'Chicken', 'Lamb', 'Goat'] as $type)
                     <option value="{{ strtolower($type) }}" 
@@ -36,8 +46,7 @@
             <label for="cut_type" class="form-label">Cut Type</label>
             <select name="cut_type" 
                     id="cut_type" 
-                    class="form-select @error('cut_type') is-invalid @enderror" 
-                    required>
+                    class="form-select @error('cut_type') is-invalid @enderror">
                 <option value="">Select Cut Type</option>
                 @foreach(['Prime', 'Choice', 'Select', 'Standard'] as $type)
                     <option value="{{ strtolower($type) }}" 
@@ -72,9 +81,22 @@
                    class="form-control @error('default_price_per_kg') is-invalid @enderror" 
                    value="{{ old('default_price_per_kg', $meatCut->default_price_per_kg ?? '') }}" 
                    step="0.01" 
-                   min="0" 
-                   required>
+                   min="0">
             @error('default_price_per_kg')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="package_price" class="form-label">Price per Package (₱)</label>
+            <input type="number" 
+                   name="package_price" 
+                   id="package_price" 
+                   class="form-control @error('package_price') is-invalid @enderror" 
+                   value="{{ old('package_price', $meatCut->package_price ?? '') }}" 
+                   step="0.01" 
+                   min="0">
+            @error('package_price')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
@@ -113,18 +135,31 @@
             @endif
         </div>
 
-        @if(isset($meatCut))
-            <div class="form-group mb-3">
-                <div class="form-check form-switch">
-                    <input type="checkbox" 
-                           class="form-check-input" 
-                           id="is_available" 
-                           name="is_available" 
-                           value="1" 
-                           {{ old('is_available', $meatCut->is_available) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="is_available">Available for Sale</label>
-                </div>
-            </div>
-        @endif
+        
     </div>
 </div> 
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var isPackaged = document.getElementById('is_packaged');
+    var pkgPrice = document.getElementById('package_price');
+    var perKg = document.getElementById('default_price_per_kg');
+    var animal = document.getElementById('animal_type');
+    var cut = document.getElementById('cut_type');
+
+    function toggleFields() {
+        var packaged = isPackaged && isPackaged.checked;
+        if (pkgPrice) pkgPrice.required = packaged;
+        if (perKg) perKg.required = !packaged;
+        if (animal) animal.required = !packaged;
+        if (cut) cut.required = !packaged;
+        if (pkgPrice) pkgPrice.closest('.form-group').style.display = packaged ? '' : 'none';
+        if (perKg) perKg.closest('.form-group').style.display = packaged ? 'none' : '';
+    }
+
+    if (isPackaged) {
+        isPackaged.addEventListener('change', toggleFields);
+        toggleFields();
+    }
+});
+</script>

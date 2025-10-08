@@ -16,6 +16,8 @@ class MeatCut extends Model
         'animal_type',
         'cut_type',
         'default_price_per_kg',
+        'is_packaged',
+        'package_price',
         'quantity',
         'is_available',
         'minimum_stock_level',
@@ -26,7 +28,9 @@ class MeatCut extends Model
         'is_available' => 'boolean',
         'quantity' => 'integer',
         'minimum_stock_level' => 'integer',
-        'default_price_per_kg' => 'decimal:2'
+        'default_price_per_kg' => 'decimal:2',
+        'is_packaged' => 'boolean',
+        'package_price' => 'decimal:2'
     ];
 
     public $sortable = [

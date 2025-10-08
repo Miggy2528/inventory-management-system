@@ -74,21 +74,9 @@
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
-                        <a wire:click.prevent="sortBy('grade')" href="#" role="button">
-                            {{ __('Grade') }}
-                            @include('includes._sort-icon', ['field' => 'grade'])
-                        </a>
-                    </th>
-                    <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('quantity')" href="#" role="button">
                             {{ __('Stock') }}
                             @include('includes._sort-icon', ['field' => 'quantity'])
-                        </a>
-                    </th>
-                    <th scope="col" class="align-middle text-center">
-                        <a wire:click.prevent="sortBy('weight_per_unit')" href="#" role="button">
-                            {{ __('Weight/Unit (kg)') }}
-                            @include('includes._sort-icon', ['field' => 'weight_per_unit'])
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
@@ -98,10 +86,7 @@
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
-                        <a wire:click.prevent="sortBy('price_per_kg')" href="#" role="button">
-                            {{ __('Price/kg') }}
-                            @include('includes._sort-icon', ['field' => 'price_per_kg'])
-                        </a>
+                        {{ __('Price') }}
                     </th>
                     <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('storage_location')" href="#" role="button">
@@ -133,19 +118,17 @@
                         {{ $product->meatCut ? $product->meatCut->name : 'N/A' }}
                     </td>
                     <td class="align-middle text-center">
-                        {{ $product->grade ?? 'N/A' }}
-                    </td>
-                    <td class="align-middle text-center">
                         {{ $product->quantity }}
-                    </td>
-                    <td class="align-middle text-center">
-                        {{ $product->weight_per_unit ? number_format($product->weight_per_unit, 2) : 'N/A' }}
                     </td>
                     <td class="align-middle text-center">
                         {{ $product->total_weight ? number_format($product->total_weight, 2) : 'N/A' }}
                     </td>
                     <td class="align-middle text-center">
-                        ₱{{ number_format($product->price_per_kg, 2) }}
+                        @if($product->is_sold_by_package)
+                            ₱{{ number_format($product->selling_price ?? 0, 2) }} <span class="text-muted">/pkg</span>
+                        @else
+                            ₱{{ number_format($product->selling_price ?? 0, 2) }} <span class="text-muted">/kg</span>
+                        @endif
                     </td>
                     <td class="align-middle text-center">
                         {{ $product->storage_location ?? 'N/A' }}
@@ -161,7 +144,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td class="align-middle text-center" colspan="11">
+                    <td class="align-middle text-center" colspan="9">
                         No results found
                     </td>
                 </tr>

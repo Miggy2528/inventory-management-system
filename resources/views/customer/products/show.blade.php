@@ -178,7 +178,11 @@
                                 <h2 class="mb-3">{{ $product->name ?? 'Unnamed Product' }}</h2>
                                 
                                 <div class="price mb-3">
-                                    ₱{{ number_format($product->selling_price ?? 0, 2) }}/kg
+                                    @if($product->is_sold_by_package)
+                                        ₱{{ number_format($product->selling_price ?? 0, 2) }}/pkg
+                                    @else
+                                        ₱{{ number_format($product->selling_price ?? 0, 2) }}/kg
+                                    @endif
                                 </div>
                                 
                                 <div class="mb-3">
@@ -258,7 +262,13 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1">{{ $relatedProduct->name ?? 'Related Product' }}</h6>
-                                        <p class="text-muted mb-1 small">₱{{ number_format($relatedProduct->selling_price ?? 0, 2) }}/kg</p>
+                                        <p class="text-muted mb-1 small">
+                                            @if($relatedProduct->is_sold_by_package)
+                                                ₱{{ number_format($relatedProduct->selling_price ?? 0, 2) }}/pkg
+                                            @else
+                                                ₱{{ number_format($relatedProduct->selling_price ?? 0, 2) }}/kg
+                                            @endif
+                                        </p>
                                         <a href="{{ route('customer.products.show', $relatedProduct) }}" 
                                            class="btn btn-sm btn-outline-primary">
                                             View Details

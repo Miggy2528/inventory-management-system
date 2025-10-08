@@ -45,6 +45,17 @@
                         </a>
                     </li>
 
+                    <li class="nav-item {{ request()->is('admin/packaged-products*') ? 'active' : null }}">
+                        <a class="nav-link" href="{{ route('packaged-products.index') }}" >
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-basket" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 -6l5 6" /><path d="M5 10h14l-1.5 9h-11z" /><path d="M9 10l1 9" /><path d="M15 10l-1 9" /></svg>
+                            </span>
+                            <span class="nav-link-title">
+                                {{ __('Packaged Products') }}
+                            </span>
+                        </a>
+                    </li>
+
                     <li class="nav-item {{ request()->is('orders*') ? 'active' : null }}">
                         <a class="nav-link" href="{{ route('orders.index') }}" >
                             <span class="nav-link-icon d-md-none d-lg-inline-block">

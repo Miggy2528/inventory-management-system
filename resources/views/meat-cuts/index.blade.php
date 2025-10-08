@@ -35,6 +35,7 @@
                                     <th>Animal Type</th>
                                     <th>Cut Type</th>
                                     <th>Price/kg</th>
+                                    <th>Price/pkg</th>
                                     <th>Quantity</th>
                                     <th>Status</th>
                                     <th>Min. Stock</th>
@@ -55,9 +56,22 @@
                                             @endif
                                         </td>
                                         <td>{{ $cut->name }}</td>
-                                        <td>{{ ucfirst($cut->animal_type) }}</td>
-                                        <td>{{ ucfirst($cut->cut_type) }}</td>
-                                        <td>₱{{ number_format($cut->default_price_per_kg, 2) }}</td>
+                                        <td>{{ $cut->animal_type ? ucfirst($cut->animal_type) : 'N/A' }}</td>
+                                        <td>{{ $cut->cut_type ? ucfirst($cut->cut_type) : 'N/A' }}</td>
+                                        <td>
+                                            @if(!$cut->is_packaged && !is_null($cut->default_price_per_kg))
+                                                ₱{{ number_format($cut->default_price_per_kg, 2) }}
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($cut->is_packaged && !is_null($cut->package_price))
+                                                ₱{{ number_format($cut->package_price, 2) }}
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
                                         <td>{{ $cut->quantity ?? 0 }}</td>
                                         <td>
                                             <span class="badge {{ $cut->is_available ? 'bg-success' : 'bg-danger' }}">
@@ -87,7 +101,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="text-center">No meat cuts found.</td>
+                                        <td colspan="10" class="text-center">No meat cuts found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

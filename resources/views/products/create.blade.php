@@ -128,8 +128,27 @@
                                         </div>
                                     </div>
 
+                                    {{-- Product Type Selection --}}
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Product Type <span class="text-danger">*</span></label>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="is_sold_by_package" id="sold_by_kg" value="0" {{ old('is_sold_by_package', '0') == '0' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="sold_by_kg">
+                                                    Sold per KG
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="is_sold_by_package" id="sold_by_package" value="1" {{ old('is_sold_by_package', '0') == '1' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="sold_by_package">
+                                                    Sold per Package
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {{-- Unit --}}
-                                    <div class="col-sm-6 col-md-6">
+                                    <div class="col-sm-6 col-md-6" id="unit-field">
                                         <div class="mb-3">
                                             <label for="unit_id" class="form-label">
                                                 Unit <span class="text-danger">*</span>
@@ -160,16 +179,30 @@
                                         </div>
                                     </div>
 
-                                    {{-- New Required Fields --}}
-                                    <div class="col-sm-6 col-md-6">
-                                        <x-input type="number" label="Price per KG" name="price_per_kg"
-                                                 id="price_per_kg" placeholder="0.00"
-                                                 value="{{ old('price_per_kg') }}" step="0.01" />
+                                    {{-- Price Fields --}}
+                                    <div class="col-sm-6 col-md-6" id="price-per-kg-field">
+                                        <div class="mb-3">
+                                            <label for="price_per_kg" class="form-label">Price per KG</label>
+                                            <input type="number" name="price_per_kg" id="price_per_kg" 
+                                                   class="form-control" placeholder="0.00" 
+                                                   value="{{ old('price_per_kg') }}" step="0.01" />
+                                        </div>
                                     </div>
 
-                                    <div class="col-sm-6 col-md-6">
-                                        <x-input type="date" label="Processing Date" name="processing_date"
-                                                 id="processing_date" value="{{ old('processing_date') }}" />
+                                    <div class="col-sm-6 col-md-6" id="price-per-package-field">
+                                        <div class="mb-3">
+                                            <label for="price_per_package" class="form-label">Price per Package</label>
+                                            <input type="number" name="price_per_package" id="price_per_package" 
+                                                   class="form-control" placeholder="0.00" 
+                                                   value="{{ old('price_per_package') }}" step="0.01" />
+                                        </div>
+                                    </div>
+
+                                    {{-- Package-specific fields --}}
+                                    <div class="col-sm-6 col-md-6" id="total-weight-field">
+                                        <x-input type="number" label="Total Weight (kg)" name="total_weight"
+                                                 id="total_weight" placeholder="0.00"
+                                                 value="{{ old('total_weight') }}" step="0.01" />
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
@@ -179,29 +212,11 @@
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
-                                        <x-input type="text" label="Grade" name="grade" id="grade"
-                                                 placeholder="e.g., A, B, Premium"
-                                                 value="{{ old('grade') }}" />
-                                    </div>
-
-                                    {{-- Other Product Fields --}}
-                                    <div class="col-sm-6 col-md-6">
-                                        <x-input type="number" label="Weight per Unit (kg)" name="weight_per_unit"
-                                                 id="weight_per_unit" placeholder="0.00"
-                                                 value="{{ old('weight_per_unit') }}" step="0.01" />
-                                    </div>
-
-                                    <div class="col-sm-6 col-md-6">
                                         <x-input type="number" label="Buying Price" name="buying_price"
                                                  id="buying_price" placeholder="0"
                                                  value="{{ old('buying_price') }}" />
                                     </div>
 
-                                    <div class="col-sm-6 col-md-6">
-                                        <x-input type="number" label="Selling Price" name="selling_price"
-                                                 id="selling_price" placeholder="0"
-                                                 value="{{ old('selling_price') }}" />
-                                    </div>
 
                                     <div class="col-sm-6 col-md-6">
                                         <x-input type="number" label="Quantity" name="quantity" id="quantity"
@@ -225,25 +240,6 @@
                                                  id="expiration_date" value="{{ old('expiration_date') }}" />
                                     </div>
 
-                                    <div class="col-sm-6 col-md-6">
-                                        <x-input type="number" label="Tax" name="tax" id="tax" placeholder="0"
-                                                 value="{{ old('tax') }}" />
-                                    </div>
-
-                                    <div class="col-sm-6 col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="tax_type">{{ __('Tax Type') }}</label>
-                                            <select name="tax_type" id="tax_type"
-                                                    class="form-select @error('tax_type') is-invalid @enderror">
-                                                <option value="">None</option>
-                                                <option value="1" {{ old('tax_type') == 1 ? 'selected' : '' }}>Fixed</option>
-                                                <option value="2" {{ old('tax_type') == 2 ? 'selected' : '' }}>Percentage</option>
-                                            </select>
-                                            @error('tax_type')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
 
                                     <div class="col-md-12">
                                         <div class="mb-3">
@@ -288,5 +284,73 @@
             imgPreview.src = oFREvent.target.result;
         }
     }
+
+    // Handle product type selection
+    function toggleProductFields() {
+        const soldByPackage = document.getElementById('sold_by_package').checked;
+        const soldByKg = document.getElementById('sold_by_kg').checked;
+        
+        // Fields to show/hide for package products
+        const packageFields = [
+            'price-per-package-field',
+            'total-weight-field'
+        ];
+        
+        // Fields to show/hide for kg products
+        const kgFields = [
+            'price-per-kg-field'
+        ];
+        
+        // Unit field visibility
+        const unitField = document.getElementById('unit-field');
+        
+        if (soldByPackage) {
+            // Show package fields, hide kg fields
+            packageFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) field.style.display = 'block';
+            });
+            
+            kgFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) field.style.display = 'none';
+            });
+            
+            // Hide unit field for packages (will be auto-assigned)
+            if (unitField) unitField.style.display = 'none';
+            
+        } else if (soldByKg) {
+            // Show kg fields, hide package fields
+            kgFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) field.style.display = 'block';
+            });
+            
+            packageFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) field.style.display = 'none';
+            });
+            
+            // Show unit field for kg products
+            if (unitField) unitField.style.display = 'block';
+        }
+    }
+
+    // Add event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        const soldByPackageRadio = document.getElementById('sold_by_package');
+        const soldByKgRadio = document.getElementById('sold_by_kg');
+        
+        if (soldByPackageRadio) {
+            soldByPackageRadio.addEventListener('change', toggleProductFields);
+        }
+        
+        if (soldByKgRadio) {
+            soldByKgRadio.addEventListener('change', toggleProductFields);
+        }
+        
+        // Initialize on page load
+        toggleProductFields();
+    });
 </script>
 @endpush
