@@ -67,9 +67,10 @@ class MeatCutController extends Controller
                 'name' => $meatCut->name,
                 'slug' => Str::slug($meatCut->name),
                 'meat_cut_id' => $meatCut->id,
-                'quantity' => 0,
+                // Mirror the current meat cut quantity so quantity shows in product list
+                'quantity' => $meatCut->quantity ?? 0,
                 'unit_id' => $unitId,
-                'category_id' => null, // Don't assign category for auto-synced products
+                'category_id' => \App\Models\Category::firstOrCreate(['name' => 'Meat Products'], ['slug' => \Illuminate\Support\Str::slug('Meat Products')])->id,
                 'price_per_kg' => $meatCut->is_packaged ? null : ($meatCut->default_price_per_kg ?? 0),
                 'price_per_package' => $meatCut->is_packaged ? ($meatCut->package_price ?? 0) : null,
                 'is_sold_by_package' => $meatCut->is_packaged ? true : false,
@@ -80,6 +81,18 @@ class MeatCutController extends Controller
                 'updated_at' => now(),
             ]
         );
+
+        // Also update any existing products with this meat_cut_id to ensure they have correct values
+        Product::where('meat_cut_id', $meatCut->id)->update([
+            'quantity' => $meatCut->quantity ?? 0,
+            'unit_id' => $unitId,
+            'is_sold_by_package' => $meatCut->is_packaged ? true : false,
+            'price_per_kg' => $meatCut->is_packaged ? null : ($meatCut->default_price_per_kg ?? 0),
+            'price_per_package' => $meatCut->is_packaged ? ($meatCut->package_price ?? 0) : null,
+            'selling_price' => $meatCut->is_packaged
+                ? ($meatCut->package_price ?? 0)
+                : ($meatCut->default_price_per_kg ?? 0),
+        ]);
 
         return redirect()->route('meat-cuts.index')
             ->with('success', 'Meat cut created successfully.');
@@ -127,20 +140,42 @@ class MeatCutController extends Controller
 
         $meatCut->update($validated);
 
+        // Resolve unit based on packaging
+        $unitId = $meatCut->is_packaged
+            ? Unit::firstOrCreate(['name' => 'Package'], ['slug' => Str::slug('Package')])->id
+            : Unit::firstOrCreate(['name' => 'Kilogram'], ['slug' => Str::slug('Kilogram')])->id;
+
         // Keep corresponding Product in sync
         Product::updateOrCreate(
             ['meat_cut_id' => $meatCut->id],
             [
                 'name' => $meatCut->name,
+                'slug' => Str::slug($meatCut->name),
                 'meat_cut_id' => $meatCut->id,
-                'quantity' => 0,
-                'unit_id' => $meatCut->is_packaged ? (Unit::where('name', 'like', '%package%')->value('id')) : null,
-                'category_id' => null, // Don't assign category for auto-synced products
+                // Keep quantity mirrored so it's visible in product listings
+                'quantity' => $meatCut->quantity ?? 0,
+                'unit_id' => $unitId,
+                'category_id' => \App\Models\Category::firstOrCreate(['name' => 'Meat Products'], ['slug' => \Illuminate\Support\Str::slug('Meat Products')])->id,
                 'price_per_kg' => $meatCut->is_packaged ? null : ($meatCut->default_price_per_kg ?? null),
                 'price_per_package' => $meatCut->is_packaged ? ($meatCut->package_price ?? null) : null,
                 'is_sold_by_package' => $meatCut->is_packaged ? true : false,
+                'selling_price' => $meatCut->is_packaged
+                    ? ($meatCut->package_price ?? 0)
+                    : ($meatCut->default_price_per_kg ?? 0),
             ]
         );
+
+        // Also update any existing products with this meat_cut_id to ensure they have correct values
+        Product::where('meat_cut_id', $meatCut->id)->update([
+            'quantity' => $meatCut->quantity ?? 0,
+            'unit_id' => $unitId,
+            'is_sold_by_package' => $meatCut->is_packaged ? true : false,
+            'price_per_kg' => $meatCut->is_packaged ? null : ($meatCut->default_price_per_kg ?? null),
+            'price_per_package' => $meatCut->is_packaged ? ($meatCut->package_price ?? null) : null,
+            'selling_price' => $meatCut->is_packaged
+                ? ($meatCut->package_price ?? 0)
+                : ($meatCut->default_price_per_kg ?? 0),
+        ]);
 
         return redirect()->route('meat-cuts.index')
             ->with('success', 'Meat cut updated successfully.');
@@ -156,5 +191,25 @@ class MeatCutController extends Controller
 
         return redirect()->route('meat-cuts.index')
             ->with('success', 'Meat cut deleted successfully.');
+    }
+
+    public function updateQuantity(Request $request, MeatCut $meatCut)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:0'
+        ]);
+
+        $meatCut->update([
+            'quantity' => $request->quantity,
+            'is_available' => $request->quantity > 0
+        ]);
+
+        // Also update the corresponding product
+        Product::where('meat_cut_id', $meatCut->id)->update([
+            'quantity' => $request->quantity
+        ]);
+
+        return redirect()->back()
+            ->with('success', 'Quantity updated successfully.');
     }
 } 

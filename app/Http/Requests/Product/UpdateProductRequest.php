@@ -43,8 +43,17 @@ class UpdateProductRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        // Generate unique slug, ignoring current product
+        $baseSlug = Str::slug($this->name, '-');
+        $slug = $baseSlug;
+        $counter = 2;
+        
+        while (\App\Models\Product::where('slug', $slug)->where('id', '!=', $this->product->id)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+        
         $this->merge([
-            'slug' => Str::slug($this->name, '-'),
+            'slug' => $slug,
         ]);
     }
 }

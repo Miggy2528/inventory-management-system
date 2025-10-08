@@ -124,11 +124,8 @@
                         {{ $product->total_weight ? number_format($product->total_weight, 2) : 'N/A' }}
                     </td>
                     <td class="align-middle text-center">
-                        @if($product->is_sold_by_package)
-                            ₱{{ number_format($product->selling_price ?? 0, 2) }} <span class="text-muted">/pkg</span>
-                        @else
-                            ₱{{ number_format($product->selling_price ?? 0, 2) }} <span class="text-muted">/kg</span>
-                        @endif
+                        <div><strong>Price:</strong> ₱{{ number_format($product->selling_price ?? 0, 2) }}</div>
+                        <div class="text-muted small">{{ $product->is_sold_by_package ? 'Sold per package' : 'Sold by kg' }}</div>
                     </td>
                     <td class="align-middle text-center">
                         {{ $product->storage_location ?? 'N/A' }}

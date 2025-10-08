@@ -255,12 +255,11 @@
                                         
                                         
                                         
-                                        <div class="price mb-2">
-                                            @if($product->is_sold_by_package)
-                                                ₱{{ number_format($product->selling_price ?? 0, 2) }}/pkg
-                                            @else
-                                                ₱{{ number_format($product->selling_price ?? 0, 2) }}/kg
-                                            @endif
+                                        <div class="price mb-1">
+                                            <strong>Price:</strong> ₱{{ number_format($product->selling_price ?? 0, 2) }}
+                                        </div>
+                                        <div class="text-muted small mb-2">
+                                            {{ $product->is_sold_by_package ? 'Sold per package' : 'Sold by kg' }}
                                         </div>
                                         
                                         <div class="text-muted small mb-3">

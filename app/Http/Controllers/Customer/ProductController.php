@@ -15,9 +15,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'unit'])
-            ->where('quantity', '>', 0)
-            ->whereNotNull('category_id'); // Only show products with proper categories (not auto-synced)
+        $query = Product::with(['category', 'unit', 'meatCut'])
+            ->where('quantity', '>', 0);
 
         // Search functionality
         if ($request->has('search') && $request->search) {
@@ -26,6 +25,9 @@ class ProductController extends Controller
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('code', 'like', "%{$search}%")
                   ->orWhereHas('category', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('meatCut', function($q) use ($search) {
                       $q->where('name', 'like', "%{$search}%");
                   });
             });
@@ -78,10 +80,9 @@ class ProductController extends Controller
      */
     public function category(Category $category)
     {
-        $products = Product::with(['category', 'unit'])
+        $products = Product::with(['category', 'unit', 'meatCut'])
             ->where('category_id', $category->id)
             ->where('quantity', '>', 0)
-            ->whereNotNull('category_id')
             ->paginate(12);
 
         $categories = Category::all();

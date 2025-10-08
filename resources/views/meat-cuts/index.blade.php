@@ -59,18 +59,11 @@
                                         <td>{{ $cut->animal_type ? ucfirst($cut->animal_type) : 'N/A' }}</td>
                                         <td>{{ $cut->cut_type ? ucfirst($cut->cut_type) : 'N/A' }}</td>
                                         <td>
-                                            @if(!$cut->is_packaged && !is_null($cut->default_price_per_kg))
-                                                ₱{{ number_format($cut->default_price_per_kg, 2) }}
-                                            @else
-                                                <span class="text-muted">—</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($cut->is_packaged && !is_null($cut->package_price))
-                                                ₱{{ number_format($cut->package_price, 2) }}
-                                            @else
-                                                <span class="text-muted">—</span>
-                                            @endif
+                                            <div>
+                                                <strong>Price:</strong>
+                                                ₱{{ number_format(($cut->is_packaged ? ($cut->package_price ?? 0) : ($cut->default_price_per_kg ?? 0)), 2) }}
+                                            </div>
+                                            <div class="text-muted small">{{ $cut->is_packaged ? 'Sold per package' : 'Sold by kg' }}</div>
                                         </td>
                                         <td>{{ $cut->quantity ?? 0 }}</td>
                                         <td>

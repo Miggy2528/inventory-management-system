@@ -19,7 +19,10 @@
                             <span class="badge bg-secondary">{{ ucfirst($cut->animal_type) }}</span>
                             <span class="badge bg-info text-dark">{{ ucfirst($cut->cut_type) }}</span>
                         </div>
-                        <p class="mb-1"><strong>Price/kg:</strong> ₱{{ number_format($cut->default_price_per_kg, 2) }}</p>
+                        <p class="mb-1"><strong>Price:</strong> ₱{{ number_format(($cut->is_packaged ? ($cut->package_price ?? 0) : ($cut->default_price_per_kg ?? 0)), 2) }}</p>
+                        <div class="text-muted small mb-2">
+                            {{ $cut->is_packaged ? 'Sold per package' : 'Sold by kg' }}
+                        </div>
                         <p class="mb-1"><strong>Quantity:</strong> {{ $cut->quantity ?? 0 }}</p>
                         <p class="mb-1"><strong>Status:</strong> <span class="badge {{ $cut->is_available ? 'bg-success' : 'bg-danger' }}">{{ $cut->is_available ? 'Available' : 'Not Available' }}</span></p>
                         <p class="mb-1"><strong>Min. Stock:</strong> {{ $cut->minimum_stock_level }}</p>

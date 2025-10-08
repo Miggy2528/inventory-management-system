@@ -66,6 +66,7 @@ class ProductController extends Controller
             $productData = [
                 'meat_cut_id' => $request->get('meat_cut_id'),
                 'name' => $request->get('name'),
+                'slug' => $request->get('slug'),
                 'code' => $request->get('code'),
                 'category_id' => $request->get('category_id'),
                 'unit_id' => $isSoldByPackage

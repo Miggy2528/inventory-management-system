@@ -56,8 +56,17 @@ class StoreProductRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        // Generate unique slug
+        $baseSlug = Str::slug($this->name, '-');
+        $slug = $baseSlug;
+        $counter = 2;
+        
+        while (\App\Models\Product::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+        
         $this->merge([
-            'slug' => Str::slug($this->name, '-'),
+            'slug' => $slug,
         ]);
     }
 

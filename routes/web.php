@@ -160,6 +160,7 @@ Route::middleware(['auth:web'])->group(function () {
         Route::resource('/categories', CategoryController::class);
         Route::resource('/units', UnitController::class);
         Route::resource('/meat-cuts', MeatCutController::class);
+        Route::patch('/meat-cuts/{meatCut}/update-quantity', [MeatCutController::class, 'updateQuantity'])->name('meat-cuts.update-quantity');
         // Packaged Products
         Route::prefix('admin')->group(function () {
             Route::resource('/packaged-products', \App\Http\Controllers\PackagedProductController::class)
@@ -262,6 +263,65 @@ Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])
 
     Route::middleware(['auth', 'role:staff'])->prefix('staff')->name('staff.')->group(function () {
         Route::get('products', [\App\Http\Controllers\Staff\InventoryController::class, 'products'])->name('products.index');
+        
+        // Temporary route to backfill products from meat cuts
+        Route::get('backfill-products', function () {
+            $meatCuts = \App\Models\MeatCut::with('products')->get();
+            $updated = 0;
+            
+            foreach ($meatCuts as $cut) {
+                $unitId = $cut->is_packaged
+                    ? \App\Models\Unit::firstOrCreate(['name' => 'Package'], ['slug' => \Illuminate\Support\Str::slug('Package')])->id
+                    : \App\Models\Unit::firstOrCreate(['name' => 'Kilogram'], ['slug' => \Illuminate\Support\Str::slug('Kilogram')])->id;
+                    
+                \App\Models\Product::where('meat_cut_id', $cut->id)->update([
+                    'quantity' => $cut->quantity ?? 0,
+                    'unit_id' => $unitId,
+                    'is_sold_by_package' => $cut->is_packaged ? true : false,
+                    'price_per_kg' => $cut->is_packaged ? null : ($cut->default_price_per_kg ?? null),
+                    'price_per_package' => $cut->is_packaged ? ($cut->package_price ?? null) : null,
+                    'selling_price' => $cut->is_packaged
+                        ? ($cut->package_price ?? 0)
+                        : ($cut->default_price_per_kg ?? 0),
+                ]);
+                $updated++;
+            }
+            
+            return "Updated {$updated} meat cuts and their products. <a href='/staff/products'>Go to Products</a>";
+        })->name('backfill.products');
+        
+        // Simple backfill route
+        Route::get('fix-products', function () {
+            $meatCuts = \App\Models\MeatCut::all();
+            $updated = 0;
+            
+            foreach ($meatCuts as $cut) {
+                $unitId = $cut->is_packaged
+                    ? \App\Models\Unit::firstOrCreate(['name' => 'Package'], ['slug' => \Illuminate\Support\Str::slug('Package')])->id
+                    : \App\Models\Unit::firstOrCreate(['name' => 'Kilogram'], ['slug' => \Illuminate\Support\Str::slug('Kilogram')])->id;
+                    
+                \App\Models\Product::where('meat_cut_id', $cut->id)->update([
+                    'quantity' => $cut->quantity ?? 0,
+                    'unit_id' => $unitId,
+                    'is_sold_by_package' => $cut->is_packaged ? true : false,
+                    'price_per_kg' => $cut->is_packaged ? null : ($cut->default_price_per_kg ?? null),
+                    'price_per_package' => $cut->is_packaged ? ($cut->package_price ?? null) : null,
+                    'selling_price' => $cut->is_packaged
+                        ? ($cut->package_price ?? 0)
+                        : ($cut->default_price_per_kg ?? 0),
+                ]);
+                $updated++;
+            }
+            
+            return "Fixed {$updated} products. <a href='/products'>Go to Products</a>";
+        })->name('fix.products');
+        
+        // Delete all products route
+        Route::get('delete-all-products', function () {
+            $deleted = \App\Models\Product::count();
+            \App\Models\Product::truncate();
+            return "Deleted {$deleted} products. <a href='/products'>Go to Products</a>";
+        })->name('delete.all.products');
     });
 });
 
